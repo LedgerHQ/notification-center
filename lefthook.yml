@@ -1,0 +1,9 @@
+pre-push:
+  parallel: true
+  commands:
+    eslint:
+      run: pnpm eslint
+    prettier:
+      run: pnpm prettier
+    build:
+      run: pnpm build
