@@ -9,7 +9,8 @@
     "lint": "eslint . --ext .ts",
     "prettier": "prettier --check .",
     "prettier:write": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "lefthook": "lefthook run pre-push"
   },
   "keywords": [],
   "author": "Ledger",
