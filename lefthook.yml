@@ -7,3 +7,5 @@ pre-push:
       run: pnpm prettier
     build:
       run: pnpm build
+    test:
+      run: pnpm jest

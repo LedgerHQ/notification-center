@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 
 dotenv.config();
+console.log(process.env.PORT);
 
-const log = () => {
-  const port = process.env.PORT;
-  console.log(port);
+const sum = (x: number, y: number) => {
+  return x + y;
 };
 
-export default log;
+export default sum;
