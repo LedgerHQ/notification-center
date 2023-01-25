@@ -7,3 +7,7 @@ dist
 # configuration files
 *.yaml
 .*
+
+# provisory
+src
+tsconfig.json
