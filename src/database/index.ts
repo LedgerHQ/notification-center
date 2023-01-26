@@ -1,11 +1,13 @@
 import { Users } from './model'
 import { payload, User } from '../utils/types'
 
-export function updateUser(payload: payload) {
-    const user = findUser(payload.walletAddress);
-    console.log(user)
-    if (!user)
+export async function updateUser(payload: payload) {
+    const user = await findUser(payload.walletAddress);
+
+    if (!user) {
+        console.log('new');
         newUser(payload.walletAddress, payload.values.telegrams, payload.values.emails)
+    }
     if (user && payload.values.emails)
         addEmails(payload.walletAddress, payload.values.emails)
     if (user && payload.values.telegrams)
@@ -43,12 +45,20 @@ export function deleteUser(wallet_address: string) {
 }
   
 // Find a user by wallet address in the collection
-export function findUser(wallet_address: string): boolean {
-  Users.findOne({ id: wallet_address }, (err: any, user: User) => {
-    if (err)
+export async function findUser(wallet_address: string): Promise<boolean> {
+    try {
+      const user = await Users.findOne({ id: wallet_address });
+      if (user) {
+        console.log("New user detected");
+        return true;
+      }
+      else {
+        console.log("User already exists");
+        return false;
+      }
+    } catch (err) {
       return false;
-  });
-  return true;
+    }
 }
   
 // Add a telegram handle to user by wallet in the collection
