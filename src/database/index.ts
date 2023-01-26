@@ -1,8 +1,19 @@
 import { Users } from './model'
-import { User } from '../utils/types'
+import { payload, User } from '../utils/types'
+
+export function updateUser(payload: payload) {
+    const user = findUser(payload.walletAddress);
+    console.log(user)
+    if (!user)
+        newUser(payload.walletAddress, payload.values.telegrams, payload.values.emails)
+    if (user && payload.values.emails)
+        addEmails(payload.walletAddress, payload.values.emails)
+    if (user && payload.values.telegrams)
+        addTelegrams(payload.walletAddress, payload.values.telegrams)
+}
 
 // Insert a new user by wallet address into the collection
-export function newUser(wallet_address: string, telegrams: string[], emails: string[]) {
+export function newUser(wallet_address: string, telegrams?: string[], emails?: string[]) {
     const user = new Users({
         id: wallet_address,
         channels: {
@@ -32,42 +43,44 @@ export function deleteUser(wallet_address: string) {
 }
   
 // Find a user by wallet address in the collection
-export function findUser(wallet_address: string) {
+export function findUser(wallet_address: string): boolean {
   Users.findOne({ id: wallet_address }, (err: any, user: User) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(user);
-    }
+    if (err)
+      return false;
   });
+  return true;
 }
   
 // Add a telegram handle to user by wallet in the collection
-export function addTelegram(wallet_address: string, telegram: string) {
+export function addTelegrams(wallet_address: string, telegrams: string[]) {
     Users.findOneAndUpdate({ id: wallet_address }, {
         $push: {
-            "channels.telegrams": telegram
+            "channels.telegrams": {
+                $each: telegrams
+            }
         }
     }, (err: any) => {
         if (err) {
             console.log(err);
         } else {
-            console.log(telegram + " telegram handle added successfully to user id : " + wallet_address);
+            console.log(telegrams + " telegram(s) handle added successfully to user id : " + wallet_address);
         }
     });
 }
 
 // Add an email handle to user by wallet in the collection
-export function addMail(wallet_address: string, email: string) {
+export function addEmails(wallet_address: string, emails: string[]) {
     Users.findOneAndUpdate({ id: wallet_address }, {
         $push: {
-            "channels.emails": email
+            "channels.emails": {
+                $each: emails
+            }
         }
     }, (err: any) => {
         if (err) {
             console.log(err);
         } else {
-            console.log(email + " email handle added successfully to user id : " + wallet_address);
+            console.log(emails + " email(s) handle added successfully to user id : " + wallet_address);
       }
     });
 }

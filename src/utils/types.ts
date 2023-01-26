@@ -4,4 +4,17 @@ export type User = {
         telegrams: string[], // Telegram handles
         emails: string[], // Mail handles
     }
- }
+}
+
+export type Values = {
+    telegrams?: string[],
+    emails?: string[],
+};
+
+export type payload = {
+    walletAddress: string,
+    values: Values,
+    timestamp: number,
+    signature: string,
+    publicKey: string,
+}
