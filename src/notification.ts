@@ -31,7 +31,7 @@ export async function sendNotifications(payload: NotificationPayload): Promise<U
             const services = getServices(user);
             if (services.telegrams) {
                 // Sending notification message to the telegram handles
-                console.log('➡️ Mail handles detected');
+                console.log('➡️ Telegram handles detected');
                 telegramPlugin(payload.message, getTelegramHandles(user));
             }
             if (services.emails) {
