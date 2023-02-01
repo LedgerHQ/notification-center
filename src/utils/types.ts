@@ -18,3 +18,10 @@ export type payload = {
     signature: string,
     publicKey: string,
 }
+
+export type ToType = "telegram" | "mail";
+
+export type NotificationPayload = {
+    to: string, // define the public key that will receive the notification
+    message: string, // define the message the signer will receive
+}
