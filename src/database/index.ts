@@ -5,7 +5,7 @@ export async function updateUser(payload: payload) {
     const user = await findUser(payload.walletAddress);
 
     if (!user) {
-        console.log('new');
+        console.log('➡️ Creating new user', payload);
         newUser(payload.walletAddress, payload.values.telegrams, payload.values.emails)
     }
     if (user && payload.values.emails)
@@ -28,7 +28,7 @@ export function newUser(wallet_address: string, telegrams?: string[], emails?: s
         if (err) {
             console.log(err);
         } else {
-            console.log("User added successfully!");
+            console.log("➡️ User added successfully!");
         }
     });
 }
@@ -48,16 +48,35 @@ export function deleteUser(wallet_address: string) {
 export async function findUser(wallet_address: string): Promise<boolean> {
     try {
       const user = await Users.findOne({ id: wallet_address });
-      if (user) {
-        console.log("New user detected");
-        return true;
-      }
-      else {
-        console.log("User already exists");
+      if (!user) {
+        console.log("➡️ User doesn't exist yet");
         return false;
       }
+      else {
+        console.log("➡️ User detected correctly");
+        return true;
+      }
     } catch (err) {
-      return false;
+        console.log("The following error ocurred : ", err);
+        return true;
+    }
+}
+
+// Get a user by wallet address in the collection
+export async function getUser(wallet_address: string): Promise<User | null> {
+    try {
+      const user = await Users.findOne({ id: wallet_address });
+      if (!user) {
+        console.log("➡️ User doesn't exist yet");
+        return null;
+      }
+      else {
+        console.log("➡️ User detected correctly");
+        return user as User;
+      }
+    } catch (err) {
+        console.log("➡️ The following error ocurred : ", err);
+        return null;
     }
 }
   
@@ -73,7 +92,7 @@ export function addTelegrams(wallet_address: string, telegrams: string[]) {
         if (err) {
             console.log(err);
         } else {
-            console.log(telegrams + " telegram(s) handle added successfully to user id : " + wallet_address);
+            console.log('➡️ ' + telegrams + " telegram(s) handle added successfully to user id : " + wallet_address);
         }
     });
 }
@@ -90,7 +109,7 @@ export function addEmails(wallet_address: string, emails: string[]) {
         if (err) {
             console.log(err);
         } else {
-            console.log(emails + " email(s) handle added successfully to user id : " + wallet_address);
+            console.log('➡️ ' + emails + " email(s) handle added successfully to user id : " + wallet_address);
       }
     });
 }
@@ -105,7 +124,7 @@ export function deleteTelegram(wallet_address: string, telegram: string) {
         if (err) {
             console.log(err);
         } else {
-            console.log(telegram + " telegram handle removed successfully from user id : " + wallet_address);
+            console.log('➡️ ' + telegram + " telegram handle removed successfully from user id : " + wallet_address);
         }
     });
 }
@@ -120,7 +139,7 @@ export function deleteEmail(wallet_address: string, email: string) {
         if (err) {
             console.log(err);
         } else {
-            console.log(email + " email handle removed successfully from user id : " + wallet_address);
+            console.log('➡️ ' + email + " email handle removed successfully from user id : " + wallet_address);
         }
     });
 }

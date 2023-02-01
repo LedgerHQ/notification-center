@@ -7,6 +7,8 @@ import { verify as verifSigner } from 'jsonwebtoken'
 import { payload } from './utils/types'
 import { updateUser } from './database';
 import dotenv from 'dotenv';
+import { telegramPlugin } from './plugins/telegram/telegramPlugin';
+import { sendNotifications } from './notification';
 
 dotenv.config();
 
@@ -66,10 +68,26 @@ router.post('/updateNotificationPreferences', rateLimiter, (req, res) => {
   if (!isValidPayload({ walletAddress, values, timestamp, signature, publicKey })) {
     return res.status(400).json({ message: 'Invalid payload' });
   }
-
+  console.log(req.body)
   // Update the database with the new preferences
   updateUser({walletAddress, values, timestamp, signature, publicKey});
   return res.json({ message: 'Preferences updated' });
+});
+
+router.post('/sendNotifications', rateLimiter, (req, res) => {
+  const { to, message } = req.body;
+
+  if (!to || !message) {
+    return res.status(400).json({ message: 'Invalid payload' });
+  }
+
+  // Check the corresponding user/handles and send the notification
+  try {
+    sendNotifications({to, message});
+  } catch (err) {
+      console.log("The following error ocurred : ", err);
+  }
+  return res.json({ message: 'Notification sent' });
 });
 
 router.get('/ping', (req, res) => {
