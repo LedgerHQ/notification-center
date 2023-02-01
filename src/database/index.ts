@@ -5,7 +5,7 @@ export async function updateUser(payload: payload) {
     const user = await findUser(payload.walletAddress);
 
     if (!user) {
-        console.log('➡️ Creating new user', payload);
+        console.log('➡️ Creating new user');
         newUser(payload.walletAddress, payload.values.telegrams, payload.values.emails)
     }
     if (user && payload.values.emails)
@@ -28,7 +28,7 @@ export function newUser(wallet_address: string, telegrams?: string[], emails?: s
         if (err) {
             console.log(err);
         } else {
-            console.log("➡️ User added successfully!");
+            console.log("➡️ User added successfully");
         }
     });
 }
@@ -39,7 +39,7 @@ export function deleteUser(wallet_address: string) {
         if (err) {
             console.log(err);
         } else {
-            console.log("User deleted successfully!");
+            console.log("➡️ User deleted successfully!");
         }
     });
 }
