@@ -1,13 +1,9 @@
 import express, { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import mongoose from 'mongoose';
-import { createVerify } from 'crypto';
-import * as bodyParser from "body-parser";
-import { verify as verifSigner } from 'jsonwebtoken'
 import { payload } from './utils/types'
 import { updateUser } from './database';
 import dotenv from 'dotenv';
-import { telegramPlugin } from './plugins/telegram/telegramPlugin';
 import { sendNotifications } from './notification';
 
 dotenv.config();
@@ -27,34 +23,27 @@ const rateLimiter = rateLimit({
   message: 'Too many requests, please try again later'
 });
 
+// This part will be tested with a correct implementation of the watcher
 const isValidPayload = (payload: payload) => {
-  const { walletAddress, values, timestamp, signature, publicKey } = payload;
-  const currentTimestamp = Date.now();
-  const timeDiff = currentTimestamp - timestamp;
-
-  // // Verify signature and publicKey
-  // const verify = createVerify('SHA256');
-  // verify.update(`${walletAddress}${values}${timestamp}`);
-
-  // if (!verify.verify(publicKey, signature)) {
+  // const currentTimestamp = Date.now()
+  // // Verify the public key
+  // const digest = crypto.createHash('sha256')
+  //   .update(payload.walletAddress + JSON.stringify(payload.values) + payload.timestamp)
+  //   .digest('hex');
+  // const recoveredPublicKey = crypto.createVerify('sha256')
+  //   .update(digest)
+  //   .verify(payload.publicKey, payload.signature, 'hex');
+  // if (!recoveredPublicKey) {
   //   return false;
   // }
 
-  // // Check that the publicKey is a valid signer of the walletAddress
-  // try {
-  //   const decoded = verifSigner(publicKey, 'test');
-  //   if (decoded.walletAddress !== walletAddress) {
-  //     return false;
-  //   }
-  // } catch (err) {
+  // // Check if the public key is a valid signer of the wallet address
+  // // missing
+
+  // // Verify the timestamp difference
+  // if (Math.abs(currentTimestamp - payload.timestamp) > (process.env.MAX_TIME_DIFF || 300000)) {
   //   return false;
   // }
-
-  // Set a deadline for the payload
-  // if (timeDiff > Number(process.env.MAX_TIME_DIFF)) {
-  //   return false;
-  // }
-
 
   return true;
 };
@@ -62,18 +51,19 @@ const isValidPayload = (payload: payload) => {
 
 app.use(express.json());
 
+// Create or update a user in the db
 router.post('/updateNotificationPreferences', rateLimiter, (req, res) => {
   const { walletAddress, values, timestamp, signature, publicKey } = req.body;
 
   if (!isValidPayload({ walletAddress, values, timestamp, signature, publicKey })) {
     return res.status(400).json({ message: 'Invalid payload' });
   }
-  console.log(req.body)
   // Update the database with the new preferences
   updateUser({walletAddress, values, timestamp, signature, publicKey});
   return res.json({ message: 'Preferences updated' });
 });
 
+// Send notification to the available services
 router.post('/sendNotifications', rateLimiter, (req, res) => {
   const { to, message } = req.body;
 
@@ -90,6 +80,7 @@ router.post('/sendNotifications', rateLimiter, (req, res) => {
   return res.json({ message: 'Notification sent' });
 });
 
+// Check server health status
 router.get('/ping', (req, res) => {
   return res.json({ message: 'Server is up and running' });
 });

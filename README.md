@@ -17,3 +17,43 @@ Install the pre-push hook
 ```sh
 npx lefhook install
 ```
+
+## Testing
+
+First, you will need to install and start the [mongodb](https://www.mongodb.com/) service using this command :
+
+```sh
+sudo service mongod start
+```
+
+You can test it locally using :
+
+```sh
+pnpm start
+```
+
+It will start an [Express](https://expressjs.com/fr/) server locally on the port defined in the .env file. You can then chose either to create a user using the `/updateNotificationPreferences` routes with it's assigned payload  :
+
+```json
+{
+    "walletAddress": "",
+    "values": {
+        "telegrams": ["", "", ""],
+        "emails": ["", "", ""]
+    },
+    "timestamp": ,
+    "signature": "",
+    "publicKey": ""
+}
+```
+
+or to send a notification to an existing user using the `/sendNotification` routes with it's assigned payload :
+
+```json
+{
+        "to": "",
+        "message": ""
+}
+```
+
+⚠️ Only [Telegram](https://telegram.org) and [Email](https://mail.google.com) services are supported for now, don't forget to configure the .env with the necessary api, you can see .env.example for more info.
