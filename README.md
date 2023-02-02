@@ -32,7 +32,7 @@ You can test it locally using :
 pnpm start
 ```
 
-It will start an [Express](https://expressjs.com/fr/) server locally on the port defined in the .env file. You can then chose either to create a user using the `/updateNotificationPreferences` routes with it's assigned payload  :
+It will start an [Express](https://expressjs.com/fr/) server locally on the port defined in the .env file. You can then chose either to create a user using the `/updateNotificationPreferences` routes with it's assigned payload :
 
 ```json
 {
@@ -51,8 +51,8 @@ or to send a notification to an existing user using the `/sendNotification` rout
 
 ```json
 {
-        "to": "",
-        "message": ""
+  "to": "",
+  "message": ""
 }
 ```
 
