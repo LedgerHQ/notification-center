@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import mongoose from 'mongoose';
-import { payload } from './utils/types'
+import { payload } from './utils/types';
 import { updateUser } from './database';
 import dotenv from 'dotenv';
 import { sendNotifications } from './notification';
@@ -14,13 +14,13 @@ const router = Router();
 // Connect to a MongoDB instance
 mongoose.set('strictQuery', true);
 mongoose.connect(process.env.DB_URL!, () => {
-  console.log('Connected to database successfully')
+  console.log('Connected to database successfully');
 });
 
 const rateLimiter = rateLimit({
   windowMs: 24 * 60 * 60 * 1000, // 24 hours
   max: 20,
-  message: 'Too many requests, please try again later'
+  message: 'Too many requests, please try again later',
 });
 
 // This part will be tested with a correct implementation of the watcher
@@ -48,18 +48,19 @@ const isValidPayload = (payload: payload) => {
   return true;
 };
 
-
 app.use(express.json());
 
 // Create or update a user in the db
 router.post('/updateNotificationPreferences', rateLimiter, (req, res) => {
   const { walletAddress, values, timestamp, signature, publicKey } = req.body;
 
-  if (!isValidPayload({ walletAddress, values, timestamp, signature, publicKey })) {
+  if (
+    !isValidPayload({ walletAddress, values, timestamp, signature, publicKey })
+  ) {
     return res.status(400).json({ message: 'Invalid payload' });
   }
   // Update the database with the new preferences
-  updateUser({walletAddress, values, timestamp, signature, publicKey});
+  updateUser({ walletAddress, values, timestamp, signature, publicKey });
   return res.json({ message: 'Preferences updated' });
 });
 
@@ -73,9 +74,9 @@ router.post('/sendNotifications', rateLimiter, (req, res) => {
 
   // Check the corresponding user/handles and send the notification
   try {
-    sendNotifications({to, message});
+    sendNotifications({ to, message });
   } catch (err) {
-      console.log("The following error ocurred : ", err);
+    console.log('The following error ocurred : ', err);
   }
   return res.json({ message: 'Notification sent' });
 });
