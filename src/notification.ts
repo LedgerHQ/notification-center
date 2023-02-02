@@ -1,13 +1,7 @@
-import express, { Router } from 'express';
-import { rateLimit } from 'express-rate-limit';
-import mongoose from 'mongoose';
-import { createVerify } from 'crypto';
-import * as bodyParser from "body-parser";
-import { verify as verifSigner } from 'jsonwebtoken'
 import { NotificationPayload, payload, User, Values } from './utils/types'
 import { getUser, updateUser } from './database';
-import dotenv from 'dotenv';
 import { telegramPlugin } from './plugins/telegram/telegramPlugin';
+import { emailPlugin } from './plugins/email/emailPlugin';
 
 export function getServices(user: User): Values {
     return (user.channels);
@@ -37,6 +31,7 @@ export async function sendNotifications(payload: NotificationPayload): Promise<U
             if (services.emails) {
                 // Sending notification message to the email handles
                 console.log('➡️ Mail handles detected');
+                // Uncomment this to work on mail notification plugin
                 // emailPlugin(payload.message, getEmailHandles(user));
             }
             return user as User;

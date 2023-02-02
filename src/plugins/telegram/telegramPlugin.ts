@@ -6,6 +6,8 @@ dotenv.config()
 
 const apiUrl =  `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}`;
 
+// Gets user id from username
+// This function can be optimized by storing id's inside the DB on first notifications
 export async function getUserId(handles: string[]): Promise<string[]> {
     let UserIds: string[] = [];
 
@@ -28,6 +30,7 @@ export async function getUserId(handles: string[]): Promise<string[]> {
     return (UserIds)
 }
 
+// Send the notification message from user chat Id
 export async function telegramPlugin(message: string, handles: string[]) {
   const chatId = await getUserId(handles);
   for (let i = 0; i < chatId.length; i++) {
