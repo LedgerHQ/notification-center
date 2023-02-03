@@ -198,7 +198,7 @@ export function deleteEmail(wallet_address: string, email: string) {
     { id: wallet_address },
     {
       $pullAll: {
-        'channels.telegrams': [email],
+        'channels.emails': [email],
       },
     },
     (err: any) => {
