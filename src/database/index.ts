@@ -33,7 +33,7 @@ export function newUser(
     channels: {
       telegrams: telegrams,
       emails: emails,
-      ifttts: ifttts
+      ifttts: ifttts,
     },
   });
 
@@ -160,7 +160,7 @@ export function addIfttts(wallet_address: string, ifttts: string[]) {
       } else {
         console.log(
           '➡️ ' +
-          ifttts +
+            ifttts +
             ' ifttts(s) handle added successfully to user id : ' +
             wallet_address
         );
@@ -217,7 +217,6 @@ export function deleteEmail(wallet_address: string, email: string) {
   );
 }
 
-
 // Delete an IFTTT from a user by wallet in the collection
 export function deleteIfttt(wallet_address: string, ifttt: string) {
   Users.findOneAndUpdate(
@@ -233,7 +232,7 @@ export function deleteIfttt(wallet_address: string, ifttt: string) {
       } else {
         console.log(
           '➡️ ' +
-          ifttt +
+            ifttt +
             ' ifttt handle removed successfully from user id : ' +
             wallet_address
         );
