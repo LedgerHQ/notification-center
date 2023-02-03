@@ -9,6 +9,7 @@ export type User = {
 export type Values = {
   telegrams?: string[];
   emails?: string[];
+  ifttts?: string[];
 };
 
 export type payload = {

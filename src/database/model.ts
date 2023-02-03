@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   channels: {
     telegrams: [String],
     emails: [String],
+    ifttts: [String],
   },
 });
 
