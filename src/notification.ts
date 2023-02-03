@@ -42,7 +42,7 @@ export async function sendNotifications(
       if (services.ifttts && services.ifttts.length > 0) {
         // Sending notification message to IFTTT
         console.log('➡️ IFTTT handles detected');
-        iftttPlugin(payload.message, getIFTTTHandles(user));
+        iftttPlugin(payload.message, getIFTTTWebhookKeys(user));
       }
       return user as User;
     }
