@@ -2,6 +2,7 @@ import { NotificationPayload, payload, User, Values } from './utils/types';
 import { getUser, updateUser } from './database';
 import { telegramPlugin } from './plugins/telegram/telegramPlugin';
 import { emailPlugin } from './plugins/email/emailPlugin';
+import { iftttPlugin } from './plugins/iftt/ifttPlugin';
 
 export function getServices(user: User): Values {
   return user.channels;
@@ -13,6 +14,10 @@ export function getTelegramHandles(user: User): string[] {
 
 export function getEmailHandles(user: User): string[] {
   return user.channels.emails;
+}
+
+export function getIFTTTWebhookKeys(user: User): string[] {
+  return user.channels.ifttts;
 }
 
 export async function sendNotifications(
@@ -33,6 +38,11 @@ export async function sendNotifications(
         console.log('➡️ Mail handles detected');
         // Uncomment this to work on mail notification plugin
         // emailPlugin(payload.message, getEmailHandles(user));
+      }
+      if (services.ifttts && services.ifttts.length > 0) {
+        // Sending notification message to IFTTT
+        console.log('➡️ IFTTT handles detected');
+        iftttPlugin(payload.message, getIFTTTHandles(user));
       }
       return user as User;
     }
