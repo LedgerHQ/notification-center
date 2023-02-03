@@ -28,12 +28,12 @@ export async function sendNotifications(
     if (!user) return null;
     else {
       const services = getServices(user);
-      if (services.telegrams) {
+      if (services.telegrams && services.telegrams.length > 0) {
         // Sending notification message to the telegram handles
         console.log('➡️ Telegram handles detected');
         telegramPlugin(payload.message, getTelegramHandles(user));
       }
-      if (services.emails) {
+      if (services.emails && services.emails.length > 0) {
         // Sending notification message to the email handles
         console.log('➡️ Mail handles detected');
         // Uncomment this to work on mail notification plugin
