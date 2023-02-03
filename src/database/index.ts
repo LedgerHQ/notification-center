@@ -33,6 +33,7 @@ export function newUser(
     channels: {
       telegrams: telegrams,
       emails: emails,
+      ifttts: ifttts
     },
   });
 
