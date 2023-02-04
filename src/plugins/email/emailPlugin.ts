@@ -1,6 +1,6 @@
 import axios from 'axios';
 import * as dotenv from 'dotenv';
-import { NotificationPayload } from '../../utils/types';
+
 dotenv.config();
 
 export async function createMessage(to: string, subject: string, body: string) {

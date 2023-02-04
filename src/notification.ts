@@ -1,7 +1,6 @@
-import { NotificationPayload, payload, User, Values } from './utils/types';
-import { getUser, updateUser } from './database';
+import { NotificationPayload, User, Values } from './utils/types';
+import { getUser } from './database';
 import { telegramPlugin } from './plugins/telegram/telegramPlugin';
-import { emailPlugin } from './plugins/email/emailPlugin';
 import { iftttPlugin } from './plugins/iftt/ifttPlugin';
 
 export function getServices(user: User): Values {

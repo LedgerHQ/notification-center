@@ -7,7 +7,7 @@ const apiUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}`;
 // Gets user id from username
 // This function can be optimized by storing id's inside the DB on first notifications
 export async function getUserId(handles: string[]): Promise<string[]> {
-  let UserIds: string[] = [];
+  const UserIds: string[] = [];
 
   try {
     const response = await axios.get(
