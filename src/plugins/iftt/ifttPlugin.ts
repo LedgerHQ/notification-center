@@ -16,7 +16,7 @@ async function triggerIFTTTWebhook(key: string, message: string) {
 
 // Send the notification message from user chat Id
 export async function iftttPlugin(message: string, keys: string[]) {
-  const promises: any[] = [];
+  const promises: Promise<void>[] = [];
   keys.map((key) => {
     promises.push(triggerIFTTTWebhook(key, message));
   });

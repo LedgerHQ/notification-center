@@ -13,7 +13,7 @@ export type Values = {
   ifttts?: string[];
 };
 
-export type payload = {
+export type Payload = {
   walletAddress: string;
   values: Values;
   timestamp: number;

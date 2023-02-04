@@ -1,7 +1,7 @@
 import { Users } from './model';
-import { payload, User } from '../utils/types';
+import { Payload, User } from '../utils/types';
 
-export async function updateUser(payload: payload) {
+export async function updateUser(payload: Payload) {
   const user = await findUser(payload.walletAddress);
 
   if (!user) {
@@ -102,9 +102,9 @@ export function addTelegrams(wallet_address: string, telegrams: string[]) {
         },
       },
     },
-    (err: any) => {
+    (err: Error) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else {
         console.log(
           '➡️ ' +
@@ -128,9 +128,9 @@ export function addEmails(wallet_address: string, emails: string[]) {
         },
       },
     },
-    (err: any) => {
+    (err: Error) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else {
         console.log(
           '➡️ ' +
@@ -154,9 +154,9 @@ export function addIfttts(wallet_address: string, ifttts: string[]) {
         },
       },
     },
-    (err: any) => {
+    (err: Error) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else {
         console.log(
           '➡️ ' +
@@ -178,9 +178,9 @@ export function deleteTelegram(wallet_address: string, telegram: string) {
         'channels.telegrams': [telegram],
       },
     },
-    (err: any) => {
+    (err: Error) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else {
         console.log(
           '➡️ ' +
@@ -202,9 +202,9 @@ export function deleteEmail(wallet_address: string, email: string) {
         'channels.emails': [email],
       },
     },
-    (err: any) => {
+    (err: Error) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else {
         console.log(
           '➡️ ' +
@@ -226,9 +226,9 @@ export function deleteIfttt(wallet_address: string, ifttt: string) {
         'channels.ifttts': [ifttt],
       },
     },
-    (err: any) => {
+    (err: Error) => {
       if (err) {
-        console.log(err);
+        console.error(err);
       } else {
         console.log(
           '➡️ ' +

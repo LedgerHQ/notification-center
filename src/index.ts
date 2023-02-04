@@ -1,7 +1,7 @@
 import express, { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import mongoose from 'mongoose';
-import { payload } from './utils/types';
+import { Payload } from './utils/types';
 import { updateUser } from './database';
 import dotenv from 'dotenv';
 import { sendNotifications } from './notification';
@@ -13,7 +13,7 @@ const router = Router();
 
 // Connect to a MongoDB instance
 mongoose.set('strictQuery', true);
-mongoose.connect(process.env.DB_URL!, () => {
+mongoose.connect(process.env.DB_URL ?? '', () => {
   console.log('Connected to database successfully');
 });
 
@@ -24,7 +24,7 @@ const rateLimiter = rateLimit({
 });
 
 // This part will be tested with a correct implementation of the watcher
-const isValidPayload = (payload: payload) => {
+const isValidPayload = (_: Payload) => {
   // const currentTimestamp = Date.now()
   // // Verify the public key
   // const digest = crypto.createHash('sha256')
