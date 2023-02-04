@@ -1,7 +1,5 @@
 import axios from 'axios';
 import * as dotenv from 'dotenv';
-import { NotificationPayload } from '../../utils/types';
-import Telegraf from 'telegraf';
 dotenv.config();
 
 const apiUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}`;
