@@ -3,12 +3,14 @@ export type User = {
   channels: {
     telegrams: string[]; // Telegram handles
     emails: string[]; // Mail handles
+    ifttts: string[]; // IFTTT webhook keys
   };
 };
 
 export type Values = {
   telegrams?: string[];
   emails?: string[];
+  ifttts?: string[];
 };
 
 export type payload = {

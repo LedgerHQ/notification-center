@@ -9,26 +9,31 @@ export async function updateUser(payload: payload) {
     newUser(
       payload.walletAddress,
       payload.values.telegrams,
-      payload.values.emails
+      payload.values.emails,
+      payload.values.ifttts
     );
   }
   if (user && payload.values.emails)
     addEmails(payload.walletAddress, payload.values.emails);
   if (user && payload.values.telegrams)
     addTelegrams(payload.walletAddress, payload.values.telegrams);
+  if (user && payload.values.ifttts)
+    addIfttts(payload.walletAddress, payload.values.ifttts);
 }
 
 // Insert a new user by wallet address into the collection
 export function newUser(
   wallet_address: string,
   telegrams?: string[],
-  emails?: string[]
+  emails?: string[],
+  ifttts?: string[]
 ) {
   const user = new Users({
     id: wallet_address,
     channels: {
       telegrams: telegrams,
       emails: emails,
+      ifttts: ifttts,
     },
   });
 
@@ -138,6 +143,32 @@ export function addEmails(wallet_address: string, emails: string[]) {
   );
 }
 
+// Add an IFTTT key to user by wallet in the collection
+export function addIfttts(wallet_address: string, ifttts: string[]) {
+  Users.findOneAndUpdate(
+    { id: wallet_address },
+    {
+      $push: {
+        'channels.ifttts': {
+          $each: ifttts,
+        },
+      },
+    },
+    (err: any) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(
+          '➡️ ' +
+            ifttts +
+            ' ifttts(s) handle added successfully to user id : ' +
+            wallet_address
+        );
+      }
+    }
+  );
+}
+
 // Delete a telegram handle from a user by wallet in the collection
 export function deleteTelegram(wallet_address: string, telegram: string) {
   Users.findOneAndUpdate(
@@ -168,7 +199,7 @@ export function deleteEmail(wallet_address: string, email: string) {
     { id: wallet_address },
     {
       $pullAll: {
-        'channels.telegrams': [email],
+        'channels.emails': [email],
       },
     },
     (err: any) => {
@@ -179,6 +210,30 @@ export function deleteEmail(wallet_address: string, email: string) {
           '➡️ ' +
             email +
             ' email handle removed successfully from user id : ' +
+            wallet_address
+        );
+      }
+    }
+  );
+}
+
+// Delete an IFTTT from a user by wallet in the collection
+export function deleteIfttt(wallet_address: string, ifttt: string) {
+  Users.findOneAndUpdate(
+    { id: wallet_address },
+    {
+      $pullAll: {
+        'channels.ifttts': [ifttt],
+      },
+    },
+    (err: any) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(
+          '➡️ ' +
+            ifttt +
+            ' ifttt handle removed successfully from user id : ' +
             wallet_address
         );
       }
