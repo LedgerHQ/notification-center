@@ -1,5 +1,7 @@
 # Notification center
 
+![Quality checks](https://github.com/ledgerhq/notification-center/actions/workflows/quality.yml/badge.svg?branch=main)
+
 Open source notification web service. It is used by [Ledger Fresh](https://github.com/LedgerHQ/ledger-fresh-management), our open source web wallet based on the account abstraction.
 
 Wanna chat with us? Join our [Discord channel](https://discord.com/channels/885256081289379850/1053266126953529374)
@@ -20,7 +22,7 @@ npx lefhook install
 
 ## Testing
 
-First, you will need to install and start the [mongodb](https://www.mongodb.com/) service using this command :
+First, you will need to install and start the [mongodb](https://www.mongodb.com/) service using this command:
 
 ```sh
 sudo service mongod start
@@ -32,7 +34,7 @@ You can test it locally using :
 pnpm start
 ```
 
-It will start an [Express](https://expressjs.com/fr/) server locally on the port defined in the .env file. You can then choose either to create a user using the `/updateNotificationPreferences` routes with its assigned payload :
+It will start an [Express](https://expressjs.com/fr/) server locally on the port defined in the .env file. You can then choose either to create a user using the `/updateNotificationPreferences` routes with its assigned payload:
 
 ```json
 {
@@ -47,7 +49,7 @@ It will start an [Express](https://expressjs.com/fr/) server locally on the port
 }
 ```
 
-or to send a notification to an existing user using the `/sendNotification` routes with its assigned payload :
+or to send a notification to an existing user using the `/sendNotification` routes with its assigned payload:
 
 ```json
 {
@@ -56,4 +58,4 @@ or to send a notification to an existing user using the `/sendNotification` rout
 }
 ```
 
-⚠️ Only [Telegram](https://telegram.org) and [Email](https://mail.google.com) services are supported for now, don't forget to configure the .env with the necessary api, you can see .env.example for more info.
+⚠️ Only [Telegram](https://telegram.org) and [IFTTT](https://ifttt.com/) services are supported for now, don't forget to configure the .env with the necessary api, you can see .env.example for more info.
