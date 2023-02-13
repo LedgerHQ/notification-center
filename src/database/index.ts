@@ -1,172 +1,87 @@
 import { Users } from './model';
-import { Payload, User } from '../utils/types';
+import { Payload, User, ChannelsEnum } from '../utils/types';
 
 export async function updateUser(payload: Payload) {
-  const user = await findUser(payload.walletAddress);
+  let user = await getUser(payload.walletAddress);
 
   if (!user) {
     console.log('➡️ Creating new user');
-    newUser(
-      payload.walletAddress,
-      payload.values.telegrams,
-      payload.values.emails,
-      payload.values.ifttts
-    );
+    user = await newUser(payload.walletAddress, payload.values);
   }
-  if (user && payload.values.emails)
-    addEmails(payload.walletAddress, payload.values.emails);
-  if (user && payload.values.telegrams)
-    addTelegrams(payload.walletAddress, payload.values.telegrams);
-  if (user && payload.values.ifttts)
-    addIfttts(payload.walletAddress, payload.values.ifttts);
+
+  Object.entries(payload.values).map(([key, values]) => {
+    // TODO: cast + improve?
+    addChannelValues(payload.walletAddress, key as ChannelsEnum, values);
+  });
 }
 
 // Insert a new user by wallet address into the collection
-export function newUser(
+export async function newUser(
   wallet_address: string,
-  telegrams?: string[],
-  emails?: string[],
-  ifttts?: string[]
-) {
-  const user = new Users({
-    id: wallet_address,
-    channels: {
-      telegrams: telegrams,
-      emails: emails,
-      ifttts: ifttts,
-    },
-  });
+  channels: Payload['values']
+): Promise<User> {
+  try {
+    const user = new Users({ id: wallet_address, channels: { ...channels } });
+    const savedUser = await user.save();
 
-  user.save((err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log('➡️ User added successfully');
-    }
-  });
+    // TODO:
+    if (!savedUser) throw new Error('user.save() -- internal error');
+
+    console.log('➡️ User added successfully');
+    // TODO: ensure this is okay
+    return savedUser as User;
+  } catch (err) {
+    console.error('➡️ The following error ocurred : ', err);
+    throw err;
+  }
 }
 
 // Delete a user by wallet address from the collection
-export function deleteUser(wallet_address: string) {
-  Users.deleteOne({ id: wallet_address }, (err) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log('➡️ User deleted successfully!');
-    }
-  });
-}
-
-// Find a user by wallet address in the collection
-export async function findUser(wallet_address: string): Promise<boolean> {
+export async function deleteUser(wallet_address: string) {
   try {
-    const user = await Users.findOne({ id: wallet_address });
-    if (!user) {
-      console.log("➡️ User doesn't exist yet");
-      return false;
-    } else {
-      console.log('➡️ User detected correctly');
-      return true;
-    }
+    await Users.deleteOne({ id: wallet_address });
+    console.log('➡️ User deleted successfully!');
   } catch (err) {
-    console.log('The following error ocurred : ', err);
-    return true;
+    console.error('➡️ The following error ocurred : ', err);
   }
 }
 
 // Get a user by wallet address in the collection
 export async function getUser(wallet_address: string): Promise<User | null> {
   try {
-    const user = await Users.findOne({ id: wallet_address });
-    if (!user) {
-      console.log("➡️ User doesn't exist yet");
-      return null;
-    } else {
-      console.log('➡️ User detected correctly');
-      return user as User;
-    }
+    const user = await Users.findOne<User>({ id: wallet_address });
+    return user;
   } catch (err) {
-    console.log('➡️ The following error ocurred : ', err);
+    console.error('➡️ The following error ocurred : ', err);
     return null;
   }
 }
 
-// Add a telegram handle to user by wallet in the collection
-export function addTelegrams(wallet_address: string, telegrams: string[]) {
-  Users.findOneAndUpdate(
-    { id: wallet_address },
-    {
-      $push: {
-        'channels.telegrams': {
-          $each: telegrams,
-        },
-      },
-    },
-    (err: Error) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(
-          '➡️ ' +
-            telegrams +
-            ' telegram(s) handle added successfully to user id : ' +
-            wallet_address
-        );
-      }
-    }
-  );
-}
+// Add a channel handle to user by wallet in the collection
+export async function addChannelValues(
+  wallet_address: string,
+  key: ChannelsEnum,
+  values: string[]
+) {
+  try {
+    const user = await Users.findOneAndUpdate(
+      { id: wallet_address },
+      { $push: { [`channels.${key}`]: { $each: values } } }
+    );
 
-// Add an email handle to user by wallet in the collection
-export function addEmails(wallet_address: string, emails: string[]) {
-  Users.findOneAndUpdate(
-    { id: wallet_address },
-    {
-      $push: {
-        'channels.emails': {
-          $each: emails,
-        },
-      },
-    },
-    (err: Error) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(
-          '➡️ ' +
-            emails +
-            ' email(s) handle added successfully to user id : ' +
-            wallet_address
-        );
-      }
+    if (user === null) {
+      throw new Error('Users.findOneAndUpdate -- internal error');
     }
-  );
-}
-
-// Add an IFTTT key to user by wallet in the collection
-export function addIfttts(wallet_address: string, ifttts: string[]) {
-  Users.findOneAndUpdate(
-    { id: wallet_address },
-    {
-      $push: {
-        'channels.ifttts': {
-          $each: ifttts,
-        },
-      },
-    },
-    (err: Error) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(
-          '➡️ ' +
-            ifttts +
-            ' ifttts(s) handle added successfully to user id : ' +
-            wallet_address
-        );
-      }
-    }
-  );
+    console.log(
+      '➡️ ' +
+        values +
+        ` ${key} handle added successfully to user id : ` +
+        wallet_address
+    );
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
 }
 
 // Delete a telegram handle from a user by wallet in the collection

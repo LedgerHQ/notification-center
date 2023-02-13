@@ -1,18 +1,16 @@
 import axios from 'axios';
-import * as dotenv from 'dotenv';
-dotenv.config();
 
-const apiUrl = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}`;
+// TODO: harmonize plugin interface
+// TODO: .env?
+const API_URL = `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}`;
 
 // Gets user id from username
 // This function can be optimized by storing id's inside the DB on first notifications
-export async function getUserId(handles: string[]): Promise<string[]> {
+async function getUserId(handles: string[]): Promise<string[]> {
   const UserIds: string[] = [];
 
   try {
-    const response = await axios.get(
-      `https://api.telegram.org/bot${process.env.TELEGRAM_TOKEN}/getUpdates`
-    );
+    const response = await axios.get(`${API_URL}/getUpdates`);
     const chats = response.data.result;
     if (chats.length > 0) {
       for (let i = 0; i < chats.length; i++) {
@@ -29,11 +27,11 @@ export async function getUserId(handles: string[]): Promise<string[]> {
 }
 
 // Send the notification message from user chat Id
-export async function telegramPlugin(message: string, handles: string[]) {
+export async function notify(message: string, handles: string[]) {
   const chatId = await getUserId(handles);
   for (let i = 0; i < chatId.length; i++) {
     try {
-      const res = await axios.post(`${apiUrl}/sendMessage`, {
+      const res = await axios.post(`${API_URL}/sendMessage`, {
         chat_id: chatId[i],
         text: message,
       });

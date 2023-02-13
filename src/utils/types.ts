@@ -1,27 +1,23 @@
-export type User = {
-  id: string; // wallet address
-  channels: {
-    telegrams: string[]; // Telegram handles
-    emails: string[]; // Mail handles
-    ifttts: string[]; // IFTTT webhook keys
-  };
+export type ChannelsType = {
+  telegrams: string[]; // Telegram handles
+  emails: string[]; // Mail handles
+  ifttts: string[]; // IFTTT webhook keys
 };
 
-export type Values = {
-  telegrams?: string[];
-  emails?: string[];
-  ifttts?: string[];
+export type ChannelsEnum = keyof ChannelsType;
+
+export type User = {
+  id: string; // wallet address
+  channels: ChannelsType;
 };
 
 export type Payload = {
   walletAddress: string;
-  values: Values;
+  values: ChannelsType;
   timestamp: number;
   signature: string;
   publicKey: string;
 };
-
-export type ToType = 'telegram' | 'mail';
 
 export type NotificationPayload = {
   to: string; // define the public key that will receive the notification

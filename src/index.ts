@@ -1,9 +1,10 @@
+import dotenv from 'dotenv';
 import express, { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import mongoose from 'mongoose';
+
 import { Payload } from './utils/types';
 import { updateUser } from './database';
-import dotenv from 'dotenv';
 import { sendNotifications } from './notification';
 
 dotenv.config();
