@@ -1,22 +1,18 @@
-import { NotificationPayload, User, Values } from './utils/types';
+import {
+  NotificationPayload,
+  User,
+  ChannelsType,
+  ChannelsEnum,
+} from './utils/types';
 import { getUser } from './database';
-import { telegramPlugin } from './plugins/telegram/telegramPlugin';
-import { iftttPlugin } from './plugins/iftt/ifttPlugin';
+import plugins from './plugins';
 
-export function getServices(user: User): Values {
+function getServices(user: User): ChannelsType {
   return user.channels;
 }
 
-export function getTelegramHandles(user: User): string[] {
-  return user.channels.telegrams;
-}
-
-export function getEmailHandles(user: User): string[] {
-  return user.channels.emails;
-}
-
-export function getIFTTTWebhookKeys(user: User): string[] {
-  return user.channels.ifttts;
+function getHandles(user: User, channels: ChannelsEnum) {
+  return user.channels[channels];
 }
 
 export async function sendNotifications(
@@ -27,21 +23,18 @@ export async function sendNotifications(
     if (!user) return null;
     else {
       const services = getServices(user);
-      if (services.telegrams && services.telegrams.length > 0) {
+      if (services.telegrams?.length) {
         // Sending notification message to the telegram handles
-        console.log('➡️ Telegram handles detected');
-        telegramPlugin(payload.message, getTelegramHandles(user));
+        plugins.telegram.notify(payload.message, getHandles(user, 'telegrams'));
       }
-      if (services.emails && services.emails.length > 0) {
+      if (services.emails?.length) {
         // Sending notification message to the email handles
-        console.log('➡️ Mail handles detected');
         // Uncomment this to work on mail notification plugin
-        // emailPlugin(payload.message, getEmailHandles(user));
+        // emailPlugin.notify(payload.message, getHandles(user, "emails"));
       }
-      if (services.ifttts && services.ifttts.length > 0) {
+      if (services.ifttts?.length) {
         // Sending notification message to IFTTT
-        console.log('➡️ IFTTT handles detected');
-        iftttPlugin(payload.message, getIFTTTWebhookKeys(user));
+        plugins.ifttt.notify(payload.message, getHandles(user, 'ifttts'));
       }
       return user as User;
     }
