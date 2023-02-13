@@ -1,11 +1,11 @@
 pre-push:
   parallel: true
   commands:
-    eslint:
+    lint:
       run: pnpm eslint
     prettier:
       run: pnpm prettier
     build:
       run: pnpm build
     test:
-      run: pnpm jest
+      run: pnpm test:ci
