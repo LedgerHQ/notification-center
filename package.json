@@ -10,6 +10,7 @@
     "prettier": "prettier --check .",
     "prettier:write": "prettier --write .",
     "test": "jest",
+    "test:ci": "jest --ci",
     "lefthook": "lefthook run pre-push"
   },
   "keywords": [],
