@@ -1,9 +1,17 @@
 name: Quality checks ✅
 
-on: [push]
+on:  
+  push:
+    branches:
+      - main
+      - prod
+  pull_request:
+    branches:
+      - main
 
 jobs:
   eslint:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,6 +35,7 @@ jobs:
         run: pnpm run lint
 
   prettier:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -50,6 +59,7 @@ jobs:
         run: pnpm run prettier
 
   build:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -73,6 +83,7 @@ jobs:
         run: pnpm run build
 
   test:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     strategy:
       matrix:
