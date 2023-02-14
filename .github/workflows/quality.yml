@@ -2,6 +2,8 @@ name: Quality checks ✅
 
 on:  
   push:
+    branches:
+      - maing
   pull_request:
     branches:
       - main
