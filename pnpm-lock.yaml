@@ -4,6 +4,7 @@ specifiers:
   '@jest/globals': ^29.4.0
   '@types/body-parser': ^1.19.2
   '@types/express': ^4.17.16
+  '@types/jest': ^29.4.0
   '@types/jsonwebtoken': ^9.0.1
   '@types/node': ^18.11.18
   '@typescript-eslint/eslint-plugin': ^5.49.0
@@ -35,6 +36,7 @@ devDependencies:
   '@jest/globals': 29.4.0
   '@types/body-parser': 1.19.2
   '@types/express': 4.17.16
+  '@types/jest': 29.4.0
   '@types/jsonwebtoken': 9.0.1
   '@types/node': 18.11.18
   '@typescript-eslint/eslint-plugin': 5.49.0_iu322prlnwsygkcra5kbpy22si
@@ -1668,6 +1670,13 @@ packages:
     resolution: {integrity: sha512-c3mAZEuK0lvBp8tmuL74XRKn1+y2dcwOUpH7x4WrF6gk1GIgiluDRgMYQtw2OFcBvAJWlt6ASU3tSqxp0Uu0Aw==}
     dependencies:
       '@types/istanbul-lib-report': 3.0.0
+    dev: true
+
+  /@types/jest/29.4.0:
+    resolution: {integrity: sha512-VaywcGQ9tPorCX/Jkkni7RWGFfI11whqzs8dvxF41P17Z+z872thvEvlIbznjPJ02kl1HMX3LmLOonsj2n7HeQ==}
+    dependencies:
+      expect: 29.4.0
+      pretty-format: 29.4.0
     dev: true
 
   /@types/json-schema/7.0.11:
