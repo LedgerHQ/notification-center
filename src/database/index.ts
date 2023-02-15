@@ -31,7 +31,7 @@ export async function newUser(
     // TODO: ensure this is okay
     return savedUser as User;
   } catch (err) {
-    console.error('➡️ The following error ocurred : ', err);
+    console.error('➡️ The following error ocurred: ', err);
     throw err;
   }
 }
@@ -42,7 +42,7 @@ export async function deleteUser(wallet_address: string) {
     await Users.deleteOne({ id: wallet_address });
     console.log('➡️ User deleted successfully!');
   } catch (err) {
-    console.error('➡️ The following error ocurred : ', err);
+    console.error('➡️ The following error ocurred: ', err);
   }
 }
 
@@ -52,7 +52,7 @@ export async function getUser(wallet_address: string): Promise<User | null> {
     const user = await Users.findOne<User>({ id: wallet_address });
     return user;
   } catch (err) {
-    console.error('➡️ The following error ocurred : ', err);
+    console.error('➡️ The following error ocurred: ', err);
     return null;
   }
 }
@@ -75,7 +75,7 @@ export async function addChannelValues(
     console.log(
       '➡️ ' +
         values +
-        ` ${key} handle added successfully to user id : ` +
+        ` ${key} handle added successfully to user id: ` +
         wallet_address
     );
   } catch (err) {
@@ -100,7 +100,7 @@ export function deleteTelegram(wallet_address: string, telegram: string) {
         console.log(
           '➡️ ' +
             telegram +
-            ' telegram handle removed successfully from user id : ' +
+            ' telegram handle removed successfully from user id: ' +
             wallet_address
         );
       }
@@ -124,7 +124,7 @@ export function deleteEmail(wallet_address: string, email: string) {
         console.log(
           '➡️ ' +
             email +
-            ' email handle removed successfully from user id : ' +
+            ' email handle removed successfully from user id: ' +
             wallet_address
         );
       }
@@ -148,7 +148,7 @@ export function deleteIfttt(wallet_address: string, ifttt: string) {
         console.log(
           '➡️ ' +
             ifttt +
-            ' ifttt handle removed successfully from user id : ' +
+            ' ifttt handle removed successfully from user id: ' +
             wallet_address
         );
       }

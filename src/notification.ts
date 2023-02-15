@@ -39,7 +39,7 @@ export async function sendNotifications(
       return user as User;
     }
   } catch (err) {
-    console.log('➡️ The following error ocurred : ', err);
+    console.log('➡️ The following error ocurred: ', err);
     return null;
   }
 }

@@ -28,7 +28,7 @@ First, you will need to install and start the [mongodb](https://www.mongodb.com/
 sudo service mongod start
 ```
 
-You can test it locally using :
+You can test it locally using:
 
 ```sh
 pnpm start

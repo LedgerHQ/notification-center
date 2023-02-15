@@ -77,7 +77,7 @@ router.post('/sendNotifications', rateLimiter, (req, res) => {
   try {
     sendNotifications({ to, message });
   } catch (err) {
-    console.log('The following error ocurred : ', err);
+    console.log('The following error ocurred: ', err);
   }
   return res.json({ message: 'Notification sent' });
 });
