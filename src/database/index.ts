@@ -1,7 +1,7 @@
 import { Users } from './model';
-import { Payload, User, ChannelsEnum } from '../utils/types';
+import { Payload, Database, ChannelsEnum } from '../types';
 
-export async function updateUser(payload: Payload) {
+export async function updateUser(payload: Payload.UpdateUser) {
   let user = await getUser(payload.walletAddress);
 
   if (!user) {
@@ -18,8 +18,8 @@ export async function updateUser(payload: Payload) {
 // Insert a new user by wallet address into the collection
 export async function newUser(
   wallet_address: string,
-  channels: Payload['values']
-): Promise<User> {
+  channels: Payload.UpdateUser['values']
+): Promise<Database.User> {
   try {
     const user = new Users({ id: wallet_address, channels: { ...channels } });
     const savedUser = await user.save();
@@ -28,8 +28,8 @@ export async function newUser(
     if (!savedUser) throw new Error('user.save() -- internal error');
 
     console.log('➡️ User added successfully');
-    // TODO: ensure this is okay
-    return savedUser as User;
+    // TODO: remove casting
+    return savedUser as Database.User;
   } catch (err) {
     console.error('➡️ The following error ocurred : ', err);
     throw err;
@@ -47,9 +47,11 @@ export async function deleteUser(wallet_address: string) {
 }
 
 // Get a user by wallet address in the collection
-export async function getUser(wallet_address: string): Promise<User | null> {
+export async function getUser(
+  wallet_address: string
+): Promise<Database.User | null> {
   try {
-    const user = await Users.findOne<User>({ id: wallet_address });
+    const user = await Users.findOne<Database.User>({ id: wallet_address });
     return user;
   } catch (err) {
     console.error('➡️ The following error ocurred : ', err);
@@ -90,7 +92,7 @@ export function deleteTelegram(wallet_address: string, telegram: string) {
     { id: wallet_address },
     {
       $pullAll: {
-        'channels.telegrams': [telegram],
+        'channels.telegram': [telegram],
       },
     },
     (err: Error) => {
@@ -108,37 +110,13 @@ export function deleteTelegram(wallet_address: string, telegram: string) {
   );
 }
 
-// Delete an email handle from a user by wallet in the collection
-export function deleteEmail(wallet_address: string, email: string) {
-  Users.findOneAndUpdate(
-    { id: wallet_address },
-    {
-      $pullAll: {
-        'channels.emails': [email],
-      },
-    },
-    (err: Error) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(
-          '➡️ ' +
-            email +
-            ' email handle removed successfully from user id : ' +
-            wallet_address
-        );
-      }
-    }
-  );
-}
-
 // Delete an IFTTT from a user by wallet in the collection
 export function deleteIfttt(wallet_address: string, ifttt: string) {
   Users.findOneAndUpdate(
     { id: wallet_address },
     {
       $pullAll: {
-        'channels.ifttts': [ifttt],
+        'channels.ifttt': [ifttt],
       },
     },
     (err: Error) => {

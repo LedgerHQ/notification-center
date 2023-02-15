@@ -40,8 +40,8 @@ It will start an [Express](https://expressjs.com/fr/) server locally on the port
 {
     "walletAddress": "",
     "values": {
-        "telegrams": ["", "", ""],
-        "emails": ["", "", ""]
+        "telegram": ["", "", ""],
+        "ifttt": ["", "", ""]
     },
     "timestamp": ,
     "signature": "",

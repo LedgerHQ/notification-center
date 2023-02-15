@@ -1,26 +1,32 @@
 import axios from 'axios';
+import IPlugin, { DefaultPlugin } from '../IPlugin';
 
-const EVENT_NAME = 'LEDGER_FRESH_EVENT';
-const apiUrl = `https://maker.ifttt.com`;
+class IFTTTPlugin extends DefaultPlugin implements IPlugin {
+  #BASE_URL =
+    'https://maker.ifttt.com/trigger/LEDGER_FRESH_EVENT/json/with/key/';
 
-// TODO: harmonize plugin interface
+  constructor() {
+    super(IFTTTPlugin.name);
+  }
 
-async function triggerIFTTTWebhook(key: string, message: string) {
-  try {
-    await axios.post(`${apiUrl}/trigger/${EVENT_NAME}/json/with/key/${key}`, {
-      message: message,
-    });
-    console.log('➡️ IFTTT webhook event sent to ' + key);
-  } catch (err) {
-    console.error('❌ Failed to trigger webhook for key - ', key, err);
+  async notify(message: string, targets: string[]): Promise<void> {
+    // create an iterable of promises
+    const requests = targets.map((target) =>
+      axios.post(`${this.#BASE_URL}${target}`, { message })
+    );
+
+    // wait for all promises to resolve and get back the results and the status of all promises
+    const responses = await Promise.allSettled(requests);
+
+    // *OPINIONATED*: consider the notification as sent if at least one
+    // of the requests has been fulfilled
+    const isOneNotificationSent = responses.some(
+      ({ status }) => status === 'fulfilled'
+    );
+
+    // if no notification has been sent, throw an error
+    if (!isOneNotificationSent) this.throwError('➡️ IFTTT notification failed');
   }
 }
 
-// Send the notification message from user chat Id
-export async function notify(message: string, keys: string[]) {
-  const promises: Promise<void>[] = [];
-  keys.map((key) => {
-    promises.push(triggerIFTTTWebhook(key, message));
-  });
-  await Promise.all(promises);
-}
+export default IFTTTPlugin;

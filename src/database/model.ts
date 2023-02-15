@@ -4,9 +4,8 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema({
   id: { type: String, unique: true },
   channels: {
-    telegrams: [String],
-    emails: [String],
-    ifttts: [String],
+    telegram: [String],
+    ifttt: [String],
   },
 });
 

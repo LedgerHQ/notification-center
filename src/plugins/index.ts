@@ -1,9 +1,11 @@
-import * as telegram from './telegram';
-import * as ifttt from './iftt';
-import * as email from './email';
+import TelegramPlugin from './telegram';
+import IFTTTPlugin from './iftt';
+import { PluginList } from '../types';
 
-export default {
-  ifttt,
-  telegram,
-  email,
+const plugins: PluginList = {
+  // TODO: remove casting
+  telegram: new TelegramPlugin(process.env.TELEGRAM_TOKEN as string),
+  ifttt: new IFTTTPlugin(),
 };
+
+export default plugins;

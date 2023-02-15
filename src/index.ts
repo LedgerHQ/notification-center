@@ -3,7 +3,7 @@ import express, { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 import mongoose from 'mongoose';
 
-import { Payload } from './utils/types';
+import { Payload } from './types';
 import { updateUser } from './database';
 import { sendNotifications } from './notification';
 
@@ -11,6 +11,8 @@ dotenv.config();
 
 const app = express();
 const router = Router();
+
+// TODO: ensure the notification center can only be called by the watcher module
 
 // Connect to a MongoDB instance
 mongoose.set('strictQuery', true);
@@ -24,8 +26,9 @@ const rateLimiter = rateLimit({
   message: 'Too many requests, please try again later',
 });
 
+// TODO: middleware to verify the payload
 // This part will be tested with a correct implementation of the watcher
-const isValidPayload = (_: Payload) => {
+const isValidPayload = (_: Payload.UpdateUser) => {
   // const currentTimestamp = Date.now()
   // // Verify the public key
   // const digest = crypto.createHash('sha256')
@@ -83,7 +86,7 @@ router.post('/sendNotifications', rateLimiter, (req, res) => {
 });
 
 // Check server health status
-router.get('/ping', (req, res) => {
+router.get('/ping', (_, res) => {
   return res.json({ message: 'Server is up and running' });
 });
 

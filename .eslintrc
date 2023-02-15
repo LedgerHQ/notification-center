@@ -6,5 +6,12 @@
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
-  ]
+  ],
+  "rules": {
+    // Not sure about this one to be honest, learned recently 
+    // that namespace should be avoided. If you reading this 
+    // and you know better way to handle types grouping (check src/types.ts)
+    // in a single file that doesn't require namespace, feel free to contribute 
+    "@typescript-eslint/no-namespace": 0
+  }
 }
