@@ -1,6 +1,10 @@
 import axios from 'axios';
 import IConnector, { DefaultConnector } from '../IConnector';
 
+type IFTTTResponse = {
+  value: { errors: [{ message: string }] } | string;
+};
+
 /*
   NOTE: This connector use an event name. An event name is required when dealing with IFTTT's webhook applet.
   It allows IFTTT to filter request received by the webhook, that's why it is required.
@@ -31,20 +35,20 @@ class IFTTTConnector extends DefaultConnector implements IConnector {
   async notify(message: string, targets: string[]): Promise<void> {
     // create an iterable of promises
     const requests = targets.map((target) =>
-      axios.post(`${this.#BASE_URL}${target}`, { message })
+      axios.post<IFTTTResponse>(`${this.#BASE_URL}${target}`, { message })
     );
 
     // wait for all promises to resolve and get back the results and the status of all promises
     const responses = await Promise.allSettled(requests);
 
-    // *OPINIONATED*: consider the notification as sent if at least one
-    // of the requests has been fulfilled
-    const isOneNotificationSent = responses.some(
-      ({ status }) => status === 'fulfilled'
+    // *OPINIONATED*: consider the communication done if at least one of the requests has been fulfilled
+    const isAllRequestsRejected = responses.every(
+      (response) => response.status === 'rejected'
     );
 
-    // if no notification has been sent, throw an error
-    if (!isOneNotificationSent) this.throwError('➡️ IFTTT notification failed');
+    // if all requests have been rejected, throw an error
+    if (isAllRequestsRejected)
+      this.throwError('Impossible to reach the IFTTT service');
   }
 }
 

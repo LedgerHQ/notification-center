@@ -1,6 +1,6 @@
 // This custom error is used to identify errors thrown by connectors
 // and to provide a way to identify the connector that threw the error
-class ConnectorError extends Error {
+export class ConnectorError extends Error {
   #CONNECTOR_ID: string;
 
   constructor(cause: string, connectorId: string) {
