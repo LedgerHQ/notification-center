@@ -1,4 +1,4 @@
-import IPlugin from './plugins/IPlugin';
+import IConnector from './connectors/IConnector';
 
 type ChannelsType = {
   telegram: string[]; // Telegram handles
@@ -30,7 +30,7 @@ export declare namespace Payload {
   };
 }
 
-// Type that list the different plugin defined and available in the plugins folder
-export type PluginList = {
-  [key in ChannelsEnum]: IPlugin;
+// Type that list the different connector defined and available in the connectors folder
+export type ConnectorList = {
+  [key in ChannelsEnum]: IConnector;
 };

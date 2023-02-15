@@ -1,6 +1,6 @@
 import { Payload, Database } from './types';
 import { getUser } from './database';
-import plugins from './plugins';
+import connectors from './connectors';
 
 export async function sendNotifications(
   payload: Payload.NotifyUser
@@ -14,11 +14,11 @@ export async function sendNotifications(
 
       // Sending notification message to the telegram handles
       if (channels.telegram?.length)
-        plugins.telegram.notify(payload.message, user.channels.telegram);
+        connectors.telegram.notify(payload.message, user.channels.telegram);
 
       // Sending notification message to IFTTT
       if (channels.ifttt?.length)
-        plugins.ifttt.notify(payload.message, user.channels.ifttt);
+        connectors.ifttt.notify(payload.message, user.channels.ifttt);
 
       return user;
     }

@@ -1,12 +1,12 @@
 import axios from 'axios';
-import IPlugin, { DefaultPlugin } from '../IPlugin';
+import IConnector, { DefaultConnector } from '../IConnector';
 
-class IFTTTPlugin extends DefaultPlugin implements IPlugin {
+class IFTTTConnector extends DefaultConnector implements IConnector {
   #BASE_URL =
     'https://maker.ifttt.com/trigger/LEDGER_FRESH_EVENT/json/with/key/';
 
   constructor() {
-    super(IFTTTPlugin.name);
+    super(IFTTTConnector.name);
   }
 
   async notify(message: string, targets: string[]): Promise<void> {
@@ -29,4 +29,4 @@ class IFTTTPlugin extends DefaultPlugin implements IPlugin {
   }
 }
 
-export default IFTTTPlugin;
+export default IFTTTConnector;

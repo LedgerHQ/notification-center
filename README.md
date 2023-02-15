@@ -58,4 +58,4 @@ or to send a notification to an existing user using the `/sendNotification` rout
 }
 ```
 
-⚠️ Only [Telegram](https://telegram.org) and [IFTTT](https://ifttt.com/) services are supported for now, don't forget to configure the .env with the necessary api, you can see .env.example for more info.
+⚠️ Only [Telegram](https://telegram.org) and [IFTTT](https://ifttt.com/) services are supported for now (thanks to connectors), don't forget to configure the .env with the necessary api, you can see .env.example for more info.

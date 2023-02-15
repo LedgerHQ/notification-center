@@ -1,5 +1,5 @@
 import axios from 'axios';
-import IPlugin, { DefaultPlugin } from '../IPlugin';
+import IConnector, { DefaultConnector } from '../IConnector';
 
 type TelegramGetUpdateResponse = {
   result: [{ message: { from: { username: string; id: string } } }];
@@ -8,11 +8,11 @@ type telegramendMessageResponse = {
   result: { message: { message_id: string } };
 };
 
-class TelegramPlugin extends DefaultPlugin implements IPlugin {
+class TelegramConnector extends DefaultConnector implements IConnector {
   #BASE_URL;
 
   constructor(telegramToken: string) {
-    super(TelegramPlugin.name);
+    super(TelegramConnector.name);
     this.#BASE_URL = `https://api.telegram.org/bot${telegramToken}`;
   }
 
@@ -68,4 +68,4 @@ class TelegramPlugin extends DefaultPlugin implements IPlugin {
   }
 }
 
-export default TelegramPlugin;
+export default TelegramConnector;
