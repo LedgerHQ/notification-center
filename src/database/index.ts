@@ -1,6 +1,7 @@
 import { Users } from './model';
 import { Payload, Database, ChannelsEnum } from '../types';
 
+// TODO: better manage additions/deletions of channels
 export async function updateUser(payload: Payload.UpdateUser) {
   let user = await getUser(payload.walletAddress);
 

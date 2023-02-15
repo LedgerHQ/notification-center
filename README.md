@@ -20,6 +20,12 @@ Install the pre-push hook
 npx lefhook install
 ```
 
+Copy the `.env.example` into a new `.env` file
+
+```sh
+cp .env.example .env
+```
+
 ## Testing
 
 First, you will need to install and start the [mongodb](https://www.mongodb.com/) service using this command:
@@ -49,7 +55,7 @@ It will start an [Express](https://expressjs.com/fr/) server locally on the port
 }
 ```
 
-or to send a notification to an existing user using the `/sendNotification` routes with its assigned payload:
+or to send a notification to an existing user using the `/sendNotifications` routes with its assigned payload:
 
 ```json
 {
