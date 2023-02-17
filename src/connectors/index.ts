@@ -3,8 +3,7 @@ import IFTTTConnector from './iftt';
 import { ConnectorList } from '../types';
 
 const connectors: ConnectorList = {
-  // TODO: remove casting
-  telegram: new TelegramConnector(process.env.TELEGRAM_TOKEN as string),
+  telegram: new TelegramConnector(process.env.TELEGRAM_TOKEN),
   ifttt: new IFTTTConnector(),
 };
 

@@ -47,11 +47,8 @@ app.get(ROUTE.ping, (_, res) =>
 
 const server = async () => {
   try {
-    mongoose.set('strictQuery', true);
-
     // Connect to a MongoDB instance
-    // TODO: remove casting
-    await mongoose.connect(process.env.DB_URL as string);
+    await mongoose.connect(process.env.DB_URL);
 
     // Start the server
     app.listen(process.env.PORT, () => {
