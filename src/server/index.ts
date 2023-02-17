@@ -1,16 +1,11 @@
 import express from 'express';
-import { rateLimit } from 'express-rate-limit';
+
 import mongoose from 'mongoose';
 import { Payload } from '../types';
 import { updateUser } from '../database';
 import { sendNotifications } from '../notification';
 
 const app = express();
-const rateLimiter = rateLimit({
-  windowMs: 24 * 60 * 60 * 1000, // 24 hours
-  max: 20,
-  message: 'Too many requests, please try again later',
-});
 
 // TODO: middleware to verify the payload
 // This part will be tested with a correct implementation of the watcher
@@ -40,8 +35,8 @@ const isValidPayload = (_: Payload.UpdateUser) => {
 
 app.use(express.json());
 
-// Create or update a user in the db
-app.post('/updateNotificationPreferences', rateLimiter, (req, res) => {
+// Create or update a user in the db -- called by the backend of the fresh web module
+app.post('/updateNotificationPreferences', (req, res) => {
   const { walletAddress, values, timestamp, signature, publicKey } = req.body;
 
   if (
@@ -54,8 +49,8 @@ app.post('/updateNotificationPreferences', rateLimiter, (req, res) => {
   return res.json({ message: 'Preferences updated' });
 });
 
-// Send notification to the available services
-app.post('/sendNotifications', rateLimiter, (req, res) => {
+// Send notification to the available services -- called by the watcher module
+app.post('/sendNotifications', (req, res) => {
   const { to, message } = req.body;
 
   if (!to || !message) {
