@@ -9,7 +9,7 @@
     "lint": "eslint . --ext .ts",
     "prettier": "prettier --check .",
     "prettier:write": "prettier --write .",
-    "test": "jest",
+    "test": "jest --verbose",
     "test:ci": "jest --ci",
     "lefthook": "lefthook run pre-push"
   },
