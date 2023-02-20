@@ -11,6 +11,7 @@
     "prettier:write": "prettier --write .",
     "test": "jest --verbose",
     "test:ci": "jest --ci",
+    "test:coverage": "pnpm run test --coverage",
     "lefthook": "lefthook run pre-push"
   },
   "keywords": [],
