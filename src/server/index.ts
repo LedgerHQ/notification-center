@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import { updateUser } from '../database';
-import { sendNotifications } from '../notification';
+import notify from './routes/notify';
 import {
   updateMiddleware,
   notifyMiddleware,
@@ -11,7 +11,7 @@ const app = express();
 
 const ROUTE = {
   update: '/updateNotificationPreferences',
-  notify: '/sendNotifications',
+  notify: '/notify',
   ping: '/ping',
 };
 
@@ -25,18 +25,16 @@ app.use(ROUTE.notify, notifyMiddleware);
 /************************/
 /******** ROUTES ********/
 /************************/
+
 // Create or update a user in the db -- called by the backend of the fresh web module
 app.post(ROUTE.update, async (req, res) => {
-  // Update the database with the new preferences
   await updateUser(req.body);
-
   return res.json({ message: 'Preferences updated' });
 });
 
 // Send notification to the available services -- called by the watcher module
 app.post(ROUTE.notify, async (req, res) => {
-  const { to, message } = req.body;
-  await sendNotifications({ to, message });
+  await notify({ to: req.body.to, message: req.body.message });
   return res.json({ message: 'Notification sent' });
 });
 
