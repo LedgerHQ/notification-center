@@ -3,8 +3,8 @@ import { Payload, Database } from '../types';
 
 // TODO: rename user to wallet (UpdateUser -> UpdateWallet)
 
-// Custom error class to identify errors thrown when interacting with the ORM
-class DatabaseError extends Error {
+// Custom error class to identify errors thrown when interacting with the ODM
+export class DatabaseError extends Error {
   constructor(cause: string) {
     // Pass remaining arguments (including vendor specific ones) to parent constructor
     super();
@@ -24,11 +24,11 @@ export const getUser = async (
   wallet_address: string
 ): Promise<Database.User | null> => {
   try {
-    const user = Users.findById<Database.User>(wallet_address);
+    const user = await Users.findById<Database.User>(wallet_address);
     return user;
   } catch (err) {
     console.error(err);
-    // abstract the error from the ORM
+    // abstract the error from the ODM
     throw new DatabaseError('Internal error');
   }
 };
@@ -48,7 +48,7 @@ export const updateUser = async (payload: Payload.UpdateUser) => {
     );
   } catch (err) {
     console.error(err);
-    // abstract the error from the ORM
+    // abstract the error from the ODM
     throw new DatabaseError('Internal error');
   }
 };
