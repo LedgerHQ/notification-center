@@ -4,8 +4,7 @@ type ChannelsType = {
   telegram: string[]; // Telegram handles
   ifttt: string[]; // IFTTT webhook keys
 };
-
-export type ChannelsEnum = keyof ChannelsType;
+type ChannelsEnum = keyof ChannelsType;
 
 // namespace that groups all the object stored in the database
 export declare namespace Database {

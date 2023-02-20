@@ -1,136 +1,54 @@
 import { Users } from './model';
-import { Payload, Database, ChannelsEnum } from '../types';
+import { Payload, Database } from '../types';
 
-// TODO: better manage additions/deletions of channels
-export async function updateUser(payload: Payload.UpdateUser) {
-  let user = await getUser(payload.walletAddress);
+// TODO: rename user to wallet (UpdateUser -> UpdateWallet)
 
-  if (!user) {
-    console.log('➡️ Creating new user');
-    user = await newUser(payload.walletAddress, payload.values);
-  }
+// Custom error class to identify errors thrown when interacting with the ORM
+class DatabaseError extends Error {
+  constructor(cause: string) {
+    // Pass remaining arguments (including vendor specific ones) to parent constructor
+    super();
 
-  Object.entries(payload.values).map(([key, values]) => {
-    // TODO: cast + improve?
-    addChannelValues(payload.walletAddress, key as ChannelsEnum, values);
-  });
-}
+    // Maintains proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, DatabaseError);
+    }
 
-// Insert a new user by wallet address into the collection
-export async function newUser(
-  wallet_address: string,
-  channels: Payload.UpdateUser['values']
-): Promise<Database.User> {
-  try {
-    const user = new Users({ id: wallet_address, channels: { ...channels } });
-    const savedUser = await user.save();
-
-    // TODO:
-    if (!savedUser) throw new Error('user.save() -- internal error');
-
-    console.log('➡️ User added successfully');
-    // TODO: remove casting
-    return savedUser as Database.User;
-  } catch (err) {
-    console.error('➡️ The following error ocurred : ', err);
-    throw err;
-  }
-}
-
-// Delete a user by wallet address from the collection
-export async function deleteUser(wallet_address: string) {
-  try {
-    await Users.deleteOne({ id: wallet_address });
-    console.log('➡️ User deleted successfully!');
-  } catch (err) {
-    console.error('➡️ The following error ocurred : ', err);
+    this.name = 'DatabaseError';
+    this.message = `DB: ${cause}`;
   }
 }
 
 // Get a user by wallet address in the collection
-export async function getUser(
+export const getUser = async (
   wallet_address: string
-): Promise<Database.User | null> {
+): Promise<Database.User | null> => {
   try {
-    const user = await Users.findOne<Database.User>({ id: wallet_address });
+    const user = Users.findById<Database.User>(wallet_address);
     return user;
   } catch (err) {
-    console.error('➡️ The following error ocurred : ', err);
-    return null;
+    console.error(err);
+    // abstract the error from the ORM
+    throw new DatabaseError('Internal error');
   }
-}
+};
 
-// Add a channel handle to user by wallet in the collection
-export async function addChannelValues(
-  wallet_address: string,
-  key: ChannelsEnum,
-  values: string[]
-) {
+export const updateUser = async (payload: Payload.UpdateUser) => {
   try {
-    const user = await Users.findOneAndUpdate(
-      { id: wallet_address },
-      { $push: { [`channels.${key}`]: { $each: values } } }
-    );
+    // Find the user, update it with the new values if it exists, otherwise create it directly
 
-    if (user === null) {
-      throw new Error('Users.findOneAndUpdate -- internal error');
-    }
-    console.log(
-      '➡️ ' +
-        values +
-        ` ${key} handle added successfully to user id : ` +
-        wallet_address
+    // OPINIATED: In order to keep the application simple, and to have the least amount
+    // of logic in this file, I decided to use a find and replace logic.
+    // `payload.values` override the current values in the database
+    // Note that the strict option is enabled  meaning values that are not defined in the schema will be ignored
+    await Users.findOneAndUpdate(
+      { id: payload.walletAddress },
+      payload.values,
+      { upsert: true, strict: true }
     );
   } catch (err) {
     console.error(err);
-    throw err;
+    // abstract the error from the ORM
+    throw new DatabaseError('Internal error');
   }
-}
-
-// Delete a telegram handle from a user by wallet in the collection
-export function deleteTelegram(wallet_address: string, telegram: string) {
-  Users.findOneAndUpdate(
-    { id: wallet_address },
-    {
-      $pullAll: {
-        'channels.telegram': [telegram],
-      },
-    },
-    (err: Error) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(
-          '➡️ ' +
-            telegram +
-            ' telegram handle removed successfully from user id : ' +
-            wallet_address
-        );
-      }
-    }
-  );
-}
-
-// Delete an IFTTT from a user by wallet in the collection
-export function deleteIfttt(wallet_address: string, ifttt: string) {
-  Users.findOneAndUpdate(
-    { id: wallet_address },
-    {
-      $pullAll: {
-        'channels.ifttt': [ifttt],
-      },
-    },
-    (err: Error) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log(
-          '➡️ ' +
-            ifttt +
-            ' ifttt handle removed successfully from user id : ' +
-            wallet_address
-        );
-      }
-    }
-  );
-}
+};
