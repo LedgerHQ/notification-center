@@ -2,7 +2,7 @@ pre-push:
   parallel: true
   commands:
     lint:
-      run: pnpm eslint
+      run: pnpm lint
     prettier:
       run: pnpm prettier
     build:
