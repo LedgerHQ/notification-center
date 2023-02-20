@@ -7,3 +7,7 @@ node_modules
 
 # build output
 dist
+
+# test
+coverage
+report.json

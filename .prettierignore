@@ -11,3 +11,7 @@ dist
 # dependency files
 package.json
 pnpm-lock.yaml
+
+# test
+coverage
+report.json
