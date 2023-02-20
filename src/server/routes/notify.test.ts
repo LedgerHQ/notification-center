@@ -4,16 +4,12 @@ import connectors from '../../connectors';
 
 // Mock the database module
 jest.mock('../../database');
-const mockedDB = database as jest.Mocked<typeof database>;
+const mockedDB = jest.mocked(database);
 
 // Mock the connectors module and set the correct types
 jest.mock('../../connectors');
-const mockedIFTTT = connectors.ifttt as jest.Mocked<
-  (typeof connectors)['ifttt']
->;
-const mockedTelegram = connectors.telegram as jest.Mocked<
-  (typeof connectors)['telegram']
->;
+const mockedIFTTT = jest.mocked(connectors.ifttt);
+const mockedTelegram = jest.mocked(connectors.telegram);
 
 describe('notify', () => {
   // ******* FIXTURES *******

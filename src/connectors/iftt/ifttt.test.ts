@@ -4,7 +4,7 @@ import axios from 'axios';
 
 // Mock jest and set the type
 jest.mock('axios');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockedAxios = jest.mocked(axios);
 
 describe('IFTTTConnector', () => {
   describe('Internal logic', () => {
