@@ -1,12 +1,7 @@
 import axios from 'axios';
 import IConnector, { DefaultConnector } from '../IConnector';
 
-type TelegramGetUpdateResponse = {
-  result: [{ message: { from: { username: string; id: string } } }];
-};
-type telegramendMessageResponse = {
-  result: { message: { message_id: string } };
-};
+type telegramMessageResponse = { result: { message: { message_id: string } } };
 
 /*
   NOTE:
@@ -36,45 +31,18 @@ type telegramendMessageResponse = {
   Official Telegram documentation -- getUpdate method: https://core.telegram.org/bots/api#getupdates
 */
 class TelegramConnector extends DefaultConnector implements IConnector {
-  #BASE_URL;
+  #ENDPOINT;
 
   constructor(telegramToken: string) {
     super(TelegramConnector.name);
-    this.#BASE_URL = `https://api.telegram.org/bot${telegramToken}`;
-  }
-
-  async #getUserId(targets: string[]): Promise<string[]> {
-    // this shit load the last 100 messages received by the bot
-    // meaning the implementation doesn't scale at all, take a look to
-    // the README file of the project to see how to improve this
-    // For the moment, this connector is not considered as production ready
-    const response = await axios.get<TelegramGetUpdateResponse>(
-      `${this.#BASE_URL}/getUpdates`
-    );
-    const chats = response.data.result;
-
-    // get the user id of the targetted users
-    const UserIds = chats.reduce((acc: string[], curr) => {
-      const isIncluded = targets.includes(curr.message.from.username);
-      return isIncluded ? [...acc, curr.message.from.id] : acc;
-    }, []);
-
-    // throw an error if users cannot be found (meaning targetted users didn't start a conversation with the bot)
-    // *OPINIONATED*: we only throw an error if all of the targetted users has not started a conversation with the bot
-    if (UserIds.length === 0)
-      this.throwError('➡️ User did not started conversation with the bot');
-
-    return UserIds;
+    this.#ENDPOINT = `https://api.telegram.org/bot${telegramToken}/sendMessage`;
   }
 
   async notify(message: string, targets: string[]): Promise<void> {
-    const endpoint = `${this.#BASE_URL}/sendMessage`;
-    const chatIds = await this.#getUserId(targets);
-
     // create an iterable of promises
-    const requests = chatIds.map((id) =>
-      axios.post<telegramendMessageResponse>(endpoint, {
-        chat_id: id,
+    const requests = targets.map((target) =>
+      axios.post<telegramMessageResponse>(this.#ENDPOINT, {
+        chat_id: target,
         text: message,
       })
     );
@@ -90,7 +58,7 @@ class TelegramConnector extends DefaultConnector implements IConnector {
 
     // if no notification has been sent, throw an error
     if (!isOneNotificationSent)
-      this.throwError('➡️ Telegram notification failed');
+      this.throwError('Impossible to reach the Telegram service');
   }
 }
 
