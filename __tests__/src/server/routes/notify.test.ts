@@ -1,13 +1,13 @@
-import notify from '../../../../src/server/routes/notify';
-import * as database from '../../../../src/database';
-import connectors from '../../../../src/connectors';
+import notify from '@/src/server/routes/notify';
+import * as database from '@/src/database';
+import connectors from '@/src/connectors';
 
 // Mock the database module
-jest.mock('../../../../src/database');
+jest.mock('@/src/database');
 const mockedDB = jest.mocked(database);
 
 // Mock the connectors module and set the correct types
-jest.mock('../../../../src/connectors');
+jest.mock('@/src/connectors');
 const mockedIFTTT = jest.mocked(connectors.ifttt);
 const mockedTelegram = jest.mocked(connectors.telegram);
 

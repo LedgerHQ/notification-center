@@ -1,6 +1,6 @@
-import { getUser, updateUser, DatabaseError } from '../../../src/database';
-import * as DBModel from '../../../src/database/model';
-import { Payload } from '../../../src/types';
+import { getUser, updateUser, DatabaseError } from '@/src/database';
+import * as DBModel from '@/src/database/model';
+import { Payload } from '@/src/types';
 
 // Mock the database module
 jest.mock('../../../src/database/model');

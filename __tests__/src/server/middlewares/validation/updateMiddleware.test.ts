@@ -1,10 +1,10 @@
 import { Response } from 'express';
-import updateMiddleware from '../../../../../src/server/middlewares/validation/updateMiddleware';
+import updateMiddleware from '@/src/server/middlewares/validation/updateMiddleware';
 import {
   TypedRequestBody,
   payloadError,
-} from '../../../../../src/server/middlewares/validation/utils';
-import { Payload } from '../../../../../src/types';
+} from '@/src/server/middlewares/validation/utils';
+import { Payload } from '@/src/types';
 
 // TODO: rename + paylaodErrorcheck
 

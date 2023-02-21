@@ -5,6 +5,10 @@
     "outDir": "./dist",
     "strict": true,
     "esModuleInterop": true,
-    "types": ["jest"]
+    "types": ["jest"],
+    // "baseUrl": "./",
+    "paths": {
+      "@/*": ["./*"]
+    }
   }
 }

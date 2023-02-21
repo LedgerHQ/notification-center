@@ -4,4 +4,7 @@ module.exports = {
   testEnvironment: 'node',
   modulePathIgnorePatterns: ['<rootDir>/dist/'],
   coverageThreshold: { global: { lines: 80 } },
+  moduleNameMapper: {
+    '^@/(.*)': '<rootDir>/$1',
+  },
 };
