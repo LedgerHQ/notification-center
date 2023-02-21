@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { sendMessage, setupWebhook } from './utils';
+import {
+  sendMessage,
+  setupWebhook,
+} from '../../../../src/connectors/telegram/utils';
 
 // Mock jest and set the type
 jest.mock('axios');

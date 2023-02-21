@@ -1,5 +1,5 @@
 import { TelegramConnector } from './telegram';
-import { IFTTTConnector } from './iftt';
+import { IFTTTConnector } from './ifttt';
 import { ConnectorList } from '../types';
 
 const connectors: ConnectorList = {

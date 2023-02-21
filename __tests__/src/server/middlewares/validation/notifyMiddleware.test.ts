@@ -1,7 +1,10 @@
 import { Response } from 'express';
-import notifyMiddleware from './notifyMiddleware';
-import { TypedRequestBody, payloadError } from './utils';
-import { Payload } from '../../../types';
+import notifyMiddleware from '../../../../../src/server/middlewares/validation/notifyMiddleware';
+import {
+  TypedRequestBody,
+  payloadError,
+} from '../../../../../src/server/middlewares/validation/utils';
+import { Payload } from '../../../../../src/types';
 
 describe('Middleware -- notifyMiddleware', () => {
   test('calls the callback function if params are here', async () => {

@@ -1,10 +1,10 @@
-import { TelegramConnector } from './';
-import { ConnectorError } from '../IConnector';
-import { sendMessage } from './utils';
+import TelegramConnector from '../../../../src/connectors/telegram/connector';
+import { ConnectorError } from '../../../../src/connectors/IConnector';
+import { sendMessage } from '../../../../src/connectors/telegram/utils';
 import { AxiosResponse } from 'axios';
 
 // Mock jest and set the type
-jest.mock('./utils');
+jest.mock('../../../../src/connectors/telegram/utils');
 const mockedSendMessage = jest.mocked(sendMessage);
 
 describe('TelegramConnector', () => {

@@ -1,5 +1,5 @@
-import IFTTTConnector from './connector';
-import { ConnectorError } from '../IConnector';
+import IFTTTConnector from '../../../../src/connectors/ifttt/connector';
+import { ConnectorError } from '../../../../src/connectors/IConnector';
 import axios from 'axios';
 
 // Mock jest and set the type

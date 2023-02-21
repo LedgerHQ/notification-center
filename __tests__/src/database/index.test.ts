@@ -1,9 +1,9 @@
-import { getUser, updateUser, DatabaseError } from '.';
-import * as DBModel from './model';
-import { Payload } from '../types';
+import { getUser, updateUser, DatabaseError } from '../../../src/database';
+import * as DBModel from '../../../src/database/model';
+import { Payload } from '../../../src/types';
 
 // Mock the database module
-jest.mock('./model');
+jest.mock('../../../src/database/model');
 const mockedFindByID = jest.mocked(DBModel.Users.findById);
 const mockedFindOneAndUpdate = jest.mocked(DBModel.Users.findOneAndUpdate);
 
