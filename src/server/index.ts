@@ -6,6 +6,8 @@ import {
   updateMiddleware,
   notifyMiddleware,
 } from './middlewares/validation/index';
+// custom router and custom init logic required by the telegram connector
+import { TelegramRouter, setupWebhook } from '../connectors/telegram';
 
 const app = express();
 
@@ -13,6 +15,8 @@ const ROUTE = {
   update: '/updateNotificationPreferences',
   notify: '/notify',
   ping: '/ping',
+  // namespace for the telegram custom routing
+  telegram: '/telegram',
 };
 
 /*****************************/
@@ -43,10 +47,17 @@ app.get(ROUTE.ping, (_, res) =>
   res.json({ message: 'Server is up and running' })
 );
 
+// Load the telegram router in the /telegram path
+app.use(ROUTE.telegram, TelegramRouter);
+
 const server = async () => {
   try {
-    // Connect to a MongoDB instance
-    await mongoose.connect(process.env.DB_URL);
+    // explicitly set the strictQuery option to false to avoid warning
+    // this warning will be removed in the next major release of mongoose
+    mongoose.set('strictQuery', false);
+
+    // Connect to a MongoDB instance and configure the Telegram webhook
+    await Promise.all([mongoose.connect(process.env.DB_URL), setupWebhook()]);
 
     // Start the server
     app.listen(process.env.PORT, () => {

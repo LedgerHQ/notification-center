@@ -1,18 +1,17 @@
-import TelegramConnector from './index';
+import { TelegramConnector } from './';
 import { ConnectorError } from '../IConnector';
-import axios from 'axios';
+import { sendMessage } from './utils';
+import { AxiosResponse } from 'axios';
 
 // Mock jest and set the type
-jest.mock('axios');
-const mockedAxios = jest.mocked(axios);
+jest.mock('./utils');
+const mockedSendMessage = jest.mocked(sendMessage);
 
 describe('TelegramConnector', () => {
-  const telegramToken = '6121869659:AAGBACjMx9MM3cItEhrXDJ1ilxiqh8jVUB1';
-
   describe('Internal logic', () => {
     test('returns the correct ID', async () => {
       // create a new instance of the connector
-      const connector = new TelegramConnector(telegramToken);
+      const connector = new TelegramConnector();
 
       // check the ID is correct
       expect(connector.id).toBe('TelegramConnector');
@@ -20,7 +19,7 @@ describe('TelegramConnector', () => {
 
     test('throw expected error', async () => {
       // create a new instance of the connector
-      const connector = new TelegramConnector(telegramToken);
+      const connector = new TelegramConnector();
       const cause = 'test cause';
 
       try {
@@ -42,24 +41,23 @@ describe('TelegramConnector', () => {
 
   describe('Third party interaction', () => {
     const fixtures = {
-      baseUrl: `https://api.telegram.org/bot${telegramToken}/sendMessage`,
       targets: ['CHATID-1', 'CHATID-2', 'CHATID-3'],
       message: 'test message',
     };
 
-    // reset mock of axios before each test
     beforeEach(() => {
-      mockedAxios.post.mockReset();
+      mockedSendMessage.mockReset();
     });
 
     test('No requests are rejected', async () => {
       // create a new instance of the connector
-      const connector = new TelegramConnector(telegramToken);
+      const connector = new TelegramConnector();
 
       // return a valid response for all the requests
-      mockedAxios.post.mockResolvedValue({
-        result: { message: { message_id: '4664' } },
-      });
+      mockedSendMessage.mockResolvedValue({
+        status: 200,
+        statusText: 'OK',
+      } as AxiosResponse);
 
       // call the notify method and check that it doesn't throw any error
       await expect(
@@ -67,27 +65,33 @@ describe('TelegramConnector', () => {
       ).resolves.not.toThrowError();
 
       // check that the axios post method was called the right number of times
-      expect(mockedAxios.post).toHaveBeenCalledTimes(fixtures.targets.length);
+      expect(mockedSendMessage).toHaveBeenCalledTimes(fixtures.targets.length);
 
       // check that the axios post method was called with the right arguments
       fixtures.targets.forEach((target, index) => {
-        expect(mockedAxios.post).toHaveBeenNthCalledWith(
+        expect(mockedSendMessage).toHaveBeenNthCalledWith(
           index + 1,
-          fixtures.baseUrl,
-          { chat_id: target, text: fixtures.message }
+          target,
+          fixtures.message
         );
       });
     });
 
     test('Two out of three requests are rejected', async () => {
       // create a new instance of the connector
-      const connector = new TelegramConnector(telegramToken);
+      const connector = new TelegramConnector();
 
       // return a valid response for one request but reject other ones
-      mockedAxios.post
-        .mockResolvedValueOnce({ result: { message: { message_id: '4664' } } })
+      mockedSendMessage
+        .mockResolvedValueOnce({
+          status: 200,
+          statusText: 'OK',
+        } as AxiosResponse)
         // TODO:
-        .mockRejectedValue('Bad Request');
+        .mockRejectedValue({
+          status: 500,
+          statusText: 'ERROR',
+        } as AxiosResponse);
 
       // call the notify method and check that it doesn't throw any error
       await expect(
@@ -95,24 +99,27 @@ describe('TelegramConnector', () => {
       ).resolves.not.toThrowError();
 
       // check that the axios post method was called the right number of times
-      expect(mockedAxios.post).toHaveBeenCalledTimes(fixtures.targets.length);
+      expect(mockedSendMessage).toHaveBeenCalledTimes(fixtures.targets.length);
 
       // check that the axios post method was called with the right arguments
       fixtures.targets.forEach((target, index) => {
-        expect(mockedAxios.post).toHaveBeenNthCalledWith(
+        expect(mockedSendMessage).toHaveBeenNthCalledWith(
           index + 1,
-          fixtures.baseUrl,
-          { chat_id: target, text: fixtures.message }
+          target,
+          fixtures.message
         );
       });
     });
 
     test('All requests are rejected', async () => {
       // create a new instance of the connector
-      const connector = new TelegramConnector(telegramToken);
+      const connector = new TelegramConnector();
 
       // reject all requests to the third party
-      mockedAxios.post.mockRejectedValue('Bad Request');
+      mockedSendMessage.mockRejectedValue({
+        status: 401,
+        statusText: 'ERROR',
+      } as AxiosResponse);
 
       // Call the notify method and check that it does throw an error
       try {
@@ -133,14 +140,14 @@ describe('TelegramConnector', () => {
       }
 
       // check that the axios post method was called the right number of times
-      expect(mockedAxios.post).toHaveBeenCalledTimes(fixtures.targets.length);
+      expect(mockedSendMessage).toHaveBeenCalledTimes(fixtures.targets.length);
 
       // check that the axios post method was called with the right arguments
       fixtures.targets.forEach((target, index) => {
-        expect(mockedAxios.post).toHaveBeenNthCalledWith(
+        expect(mockedSendMessage).toHaveBeenNthCalledWith(
           index + 1,
-          fixtures.baseUrl,
-          { chat_id: target, text: fixtures.message }
+          target,
+          fixtures.message
         );
       });
     });
