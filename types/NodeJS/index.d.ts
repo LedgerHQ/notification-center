@@ -1,5 +1,6 @@
 export {};
 
+// This file is used to declare .env types
 declare global {
   namespace NodeJS {
     interface ProcessEnv {

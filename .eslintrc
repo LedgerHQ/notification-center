@@ -12,6 +12,10 @@
     // that namespace should be avoided. If you reading this 
     // and you know better way to handle types grouping (check src/types.ts)
     // in a single file that doesn't require namespace, feel free to contribute 
-    "@typescript-eslint/no-namespace": 0
+    "@typescript-eslint/no-namespace": 0,
+    // Find me a way to inject types defined here types/NodeJS/index.d.ts
+    // without using triple slash reference in src/index.ts and will be
+    // happy to remove this rule
+    "@typescript-eslint/triple-slash-reference": 0
   }
 }
