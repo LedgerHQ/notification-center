@@ -1,4 +1,4 @@
-import IFTTTConnector from './index';
+import IFTTTConnector from './connector';
 import { ConnectorError } from '../IConnector';
 import axios from 'axios';
 
