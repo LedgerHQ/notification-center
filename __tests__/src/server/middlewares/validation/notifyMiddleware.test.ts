@@ -15,13 +15,13 @@ describe('Middleware -- notifyMiddleware', () => {
       },
     };
 
-    const res = {} as Response;
+    const res = { status: jest.fn() } as unknown as Response;
     const next = jest.fn();
 
     notifyMiddleware(request, res, next);
 
     expect(next).toHaveBeenCalledTimes(1);
-    expect(next).not.toHaveBeenCalledWith(payloadError);
+    expect(res.status).not.toHaveBeenCalledWith(payloadError);
   });
 
   test('calls the callback function with an error if to is missing', async () => {
@@ -32,13 +32,20 @@ describe('Middleware -- notifyMiddleware', () => {
       },
     };
 
-    const res = {} as Response;
+    // mock the status and the send field. References are saved
+    // in order to be able to test them at the end of the test
+    const resStatus = jest.fn();
+    const resSend = jest.fn();
+    resStatus.mockReturnValueOnce({ send: resSend });
+    const res = { status: resStatus } as unknown as Response;
+
     const next = jest.fn();
 
     notifyMiddleware(request, res, next);
 
-    expect(next).toHaveBeenCalledTimes(1);
-    expect(next).toHaveBeenCalledWith(payloadError);
+    expect(next).toHaveBeenCalledTimes(0);
+    expect(resStatus).toHaveBeenCalledWith(400);
+    expect(resSend).toHaveBeenCalledWith(payloadError.message);
   });
 
   test('calls the callback function with an error if message is missing', async () => {
@@ -49,12 +56,19 @@ describe('Middleware -- notifyMiddleware', () => {
       },
     };
 
-    const res = {} as Response;
+    // mock the status and the send field. References are saved
+    // in order to be able to test them at the end of the test
+    const resStatus = jest.fn();
+    const resSend = jest.fn();
+    resStatus.mockReturnValueOnce({ send: resSend });
+    const res = { status: resStatus } as unknown as Response;
+
     const next = jest.fn();
 
     notifyMiddleware(request, res, next);
 
-    expect(next).toHaveBeenCalledTimes(1);
-    expect(next).toHaveBeenCalledWith(payloadError);
+    expect(next).toHaveBeenCalledTimes(0);
+    expect(resStatus).toHaveBeenCalledWith(400);
+    expect(resSend).toHaveBeenCalledWith(payloadError.message);
   });
 });

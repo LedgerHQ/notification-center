@@ -1,8 +1,8 @@
 import { NextFunction, Response } from 'express';
-import { Payload } from '../../../types';
+import { Payload } from '@/src/types';
 import { TypedRequestBody, payloadError } from './utils';
 
-const isValidPayload = (payload: Payload.UpdateUser) => {
+export const isValidPayload = (payload: Payload.UpdateUser): boolean => {
   const acceptableTimeDelta =
     parseInt(process.env.MAX_TIME_DIFF || '', 10) || 300_00;
 
@@ -24,11 +24,11 @@ const isValidPayload = (payload: Payload.UpdateUser) => {
 
 const updateMiddleware = (
   req: TypedRequestBody<Payload.UpdateUser>,
-  _: Response,
+  res: Response,
   next: NextFunction
 ) => {
   const isPayloadValid = isValidPayload(req.body);
-  isPayloadValid ? next() : next(payloadError);
+  isPayloadValid ? next() : res.status(400).send(payloadError.message);
 };
 
 export default updateMiddleware;

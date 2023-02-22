@@ -7,7 +7,6 @@ import {
 import { Payload } from '@/src/types';
 
 // TODO: rename + paylaodErrorcheck
-
 describe('Middleware -- updateMiddleware', () => {
   describe('check timestamp validation', () => {
     const bodyFixture = {
@@ -39,13 +38,13 @@ describe('Middleware -- updateMiddleware', () => {
         },
       } satisfies TypedRequestBody<Payload.UpdateUser>;
 
-      const res = {} as Response;
+      const res = { status: jest.fn() } as unknown as Response;
       const next = jest.fn();
 
       updateMiddleware(request, res, next);
 
       expect(next).toHaveBeenCalledTimes(1);
-      expect(next).not.toHaveBeenCalledWith(payloadError);
+      expect(res.status).not.toHaveBeenCalled();
     });
 
     test('payload is sent to the server 1ms before the time limit', async () => {
@@ -65,13 +64,13 @@ describe('Middleware -- updateMiddleware', () => {
         },
       } satisfies TypedRequestBody<Payload.UpdateUser>;
 
-      const res = {} as Response;
+      const res = { status: jest.fn() } as unknown as Response;
       const next = jest.fn();
 
       updateMiddleware(request, res, next);
 
       expect(next).toHaveBeenCalledTimes(1);
-      expect(next).not.toHaveBeenCalledWith(payloadError);
+      expect(res.status).not.toHaveBeenCalled();
     });
 
     test('payload is sent to the server on the time limit', async () => {
@@ -90,13 +89,13 @@ describe('Middleware -- updateMiddleware', () => {
         },
       } satisfies TypedRequestBody<Payload.UpdateUser>;
 
-      const res = {} as Response;
+      const res = { status: jest.fn() } as unknown as Response;
       const next = jest.fn();
 
       updateMiddleware(request, res, next);
 
       expect(next).toHaveBeenCalledTimes(1);
-      expect(next).not.toHaveBeenCalledWith(payloadError);
+      expect(res.status).not.toHaveBeenCalled();
     });
 
     test('payload is sent to the server 1ms after the time limit', async () => {
@@ -116,13 +115,20 @@ describe('Middleware -- updateMiddleware', () => {
         },
       } satisfies TypedRequestBody<Payload.UpdateUser>;
 
-      const res = {} as Response;
+      // mock the status and the send field. References are saved
+      // in order to be able to test them at the end of the test
+      const resStatus = jest.fn();
+      const resSend = jest.fn();
+      resStatus.mockReturnValueOnce({ send: resSend });
+      const res = { status: resStatus } as unknown as Response;
+
       const next = jest.fn();
 
       updateMiddleware(request, res, next);
 
-      expect(next).toHaveBeenCalledTimes(1);
-      expect(next).toHaveBeenCalledWith(payloadError);
+      expect(next).not.toHaveBeenCalled();
+      expect(resStatus).toHaveBeenCalledWith(400);
+      expect(resSend).toHaveBeenCalledWith(payloadError.message);
     });
 
     test('payload is verified against environment variable time limit', async () => {
@@ -149,13 +155,13 @@ describe('Middleware -- updateMiddleware', () => {
         },
       } satisfies TypedRequestBody<Payload.UpdateUser>;
 
-      const res = {} as Response;
+      const res = { status: jest.fn() } as unknown as Response;
       const next = jest.fn();
 
       updateMiddleware(request, res, next);
 
       expect(next).toHaveBeenCalledTimes(1);
-      expect(next).not.toHaveBeenCalledWith(payloadError);
+      expect(res.status).not.toHaveBeenCalled();
     });
   });
 });

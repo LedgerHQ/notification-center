@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import { updateUser } from '../database';
 import notify from './routes/notify';
+import update from './routes/update';
 import {
   updateMiddleware,
   notifyMiddleware,
@@ -9,9 +9,9 @@ import {
 // custom router and custom init logic required by the telegram connector
 import { TelegramRouter, setupWebhook } from '../connectors/telegram';
 
-const app = express();
+export const app = express();
 
-const ROUTE = {
+export const ROUTE = {
   update: '/updateNotificationPreferences',
   notify: '/notify',
   ping: '/ping',
@@ -32,14 +32,30 @@ app.use(ROUTE.notify, notifyMiddleware);
 
 // Create or update a user in the db -- called by the backend of the fresh web module
 app.post(ROUTE.update, async (req, res) => {
-  await updateUser(req.body);
-  return res.json({ message: 'Preferences updated' });
+  try {
+    await update(req.body);
+    return res.json({ message: 'Preferences updated' });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(500).send('Internal error');
+    }
+  }
 });
 
 // Send notification to the available services -- called by the watcher module
 app.post(ROUTE.notify, async (req, res) => {
-  await notify({ to: req.body.to, message: req.body.message });
-  return res.json({ message: 'Notification sent' });
+  try {
+    await notify({ to: req.body.to, message: req.body.message });
+    res.json({ message: 'Notification sent' });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(500).send(error.message);
+    } else {
+      res.status(500).send('Internal error');
+    }
+  }
 });
 
 // Check server health status
