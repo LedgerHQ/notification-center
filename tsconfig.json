@@ -6,9 +6,6 @@
     "strict": true,
     "esModuleInterop": true,
     "types": ["jest"],
-    // "baseUrl": "./",
-    "paths": {
-      "@/*": ["./*"]
-    }
+    "paths": { "@/*": ["./*"] }
   }
 }
