@@ -8,36 +8,44 @@ Wanna chat with us? Join our [Telegram group](https://t.me/+_cZcU5wZvyhmM2U0)
 
 ## Setup
 
-Install the dependencies using pnpm
+Install all the dependencies using pnpm
 
 ```sh
 pnpm install
 ```
 
-Install the pre-push hook
+Install the pre-push hook. It will run the linters and the tests before pushing your code.
 
 ```sh
 npx lefhook install
 ```
 
-Copy the `.env.example` into a new `.env` file
+Copy the `.env.example` into a new `.env` file and fill the missing required values
 
 ```sh
 cp .env.example .env
 ```
 
-## Testing
+## Run the tests
 
-First, you will need to install and start the [mongodb](https://www.mongodb.com/) service using this command:
+You can run the tests using the following command:
+
+```sh
+pnpm run test
+```
+
+## Start the application
+
+First, you will need to install and start the [mongodb](https://www.mongodb.com/) service using the command below. Note there is no Dockerfile for the moment, so you will need to install MongoDB manually.
 
 ```sh
 sudo service mongod start
 ```
 
-You can test it locally using :
+You can run the server locally by using the following command:
 
 ```sh
-pnpm start
+pnpm dev
 ```
 
 It will start an [Express](https://expressjs.com/fr/) server locally on the port defined in the .env file. You can then choose either to create a user using the `/updateNotificationPreferences` routes with its assigned payload:
@@ -64,4 +72,4 @@ or to send a notification to an existing user using the `/sendNotifications` rou
 }
 ```
 
-⚠️ Only [Telegram](https://telegram.org) and [IFTTT](https://ifttt.com/) services are supported for now (thanks to connectors), don't forget to configure the .env with the necessary api, you can see .env.example for more info.
+⚠️ Only [Telegram](https://telegram.org) and [IFTTT](https://ifttt.com/) services are supported for now (thanks to connectors).
