@@ -21,3 +21,7 @@ When the notify method is called, it creates an iterable of promises by mapping 
 The method then checks if at least one of the requests has been fulfilled, and if so, it considers the notification as sent. If none of the requests have been fulfilled, it throws an error indicating that it was impossible to reach the Telegram service.
 
 The constructor method of the TelegramConnector class calls the constructor of the parent class DefaultConnector, passing in the name of the class as an argument.
+
+# Testing it locally
+
+Follow the instructions in the following link to test the IFTTT connector locally: [here](https://github.com/LedgerHQ/notification-center/wiki/Telegram-Connector-How-to-configure-and-test-it-locally)

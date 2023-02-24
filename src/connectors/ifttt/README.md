@@ -25,3 +25,7 @@ The class has two private fields (#IFTTT_EVENT_NAME and #BASE_URL) that are used
 The constructor method calls the constructor of the parent class DefaultConnector passing the name of the class as an argument.
 
 The Promise.allSettled() method is used to wait for all the requests to complete and get back the results and status of each promise. The method then checks if all the requests have been rejected, and if so, it throws an error.
+
+# Testing it locally
+
+Follow the instructions in the following link to test the IFTTT connector locally: [here](https://github.com/LedgerHQ/notification-center/wiki/IFTTT-Connector---How-to-configure-and-test-it-locally)
