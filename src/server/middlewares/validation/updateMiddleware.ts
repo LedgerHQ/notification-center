@@ -1,5 +1,5 @@
 import { NextFunction, Response } from 'express';
-import { Payload } from '@/src/types';
+import { Payload } from '../../../../src/types';
 import { TypedRequestBody, payloadError } from './utils';
 
 export const isValidPayload = (payload: Payload.UpdateUser): boolean => {

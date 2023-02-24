@@ -1,5 +1,5 @@
-import { Payload } from '@/src/types';
-import { updateUser } from '@/src/database';
+import { Payload } from '../../types';
+import { updateUser } from '../../database';
 
 const update = async (payload: Payload.UpdateUser) => {
   await updateUser(payload);
