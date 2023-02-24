@@ -4,7 +4,7 @@ import { TypedRequestBody, payloadError } from './utils';
 
 export const isValidPayload = (payload: Payload.UpdateUser): boolean => {
   const acceptableTimeDelta =
-    parseInt(process.env.MAX_TIME_DIFF || '', 10) || 300_00;
+    parseInt(process.env.MAX_TIME_DIFF || '', 10) || 300_000;
 
   // If the request was built less than MAX_ACCEPTABLE_TIME_DIFF ms ago, or if build "in the future" it is not valid.
   if (
