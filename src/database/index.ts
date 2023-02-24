@@ -24,7 +24,9 @@ export const getUser = async (
   wallet_address: string
 ): Promise<Database.User | null> => {
   try {
-    const user = await Users.findById<Database.User>(wallet_address);
+    const user = await Users.findOne<Database.User>({
+      id: wallet_address,
+    }).exec();
     return user;
   } catch (err) {
     console.error(err);
@@ -43,7 +45,7 @@ export const updateUser = async (payload: Payload.UpdateUser) => {
     // Note that the strict option is enabled  meaning values that are not defined in the schema will be ignored
     await Users.findOneAndUpdate(
       { id: payload.walletAddress },
-      payload.values,
+      { $set: { channels: payload.values } },
       { upsert: true, strict: true }
     );
   } catch (err) {

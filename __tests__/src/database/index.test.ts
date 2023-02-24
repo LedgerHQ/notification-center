@@ -4,59 +4,70 @@ import { Payload } from '@/src/types';
 
 // Mock the database module
 jest.mock('../../../src/database/model');
-const mockedFindByID = jest.mocked(DBModel.Users.findById);
+const mockedFindOne = jest.mocked(DBModel.Users.findOne);
 const mockedFindOneAndUpdate = jest.mocked(DBModel.Users.findOneAndUpdate);
 
 describe('DB: getUser', () => {
   // reset mocks before each test
   beforeEach(() => {
-    mockedFindByID.mockReset();
+    mockedFindOne.mockReset();
   });
 
   test('should return the user if it exists', async () => {
-    const address = '0xd1699002d9548DCA840268ba1bd1afa27E0ba62d';
-    const user = { id: address };
+    const user = { id: '0xd1699002d9548DCA840268ba1bd1afa27E0ba62d' };
 
-    mockedFindByID.mockResolvedValueOnce(user);
+    const mockedExec = jest.fn().mockResolvedValueOnce(user);
+    mockedFindOne.mockImplementationOnce((() => ({
+      exec: mockedExec,
+    })) as unknown as typeof mockedFindOne);
 
-    await expect(getUser(address)).resolves.toStrictEqual(user);
+    await expect(getUser(user.id)).resolves.toStrictEqual(user);
 
-    expect(mockedFindByID).toHaveBeenCalledTimes(1);
-    expect(mockedFindByID).toHaveBeenCalledWith(address);
-    await expect(mockedFindByID.mock.results[0].value).resolves.toStrictEqual(
-      user
-    );
+    // make sure the ODM function was called with the correct arguments
+    expect(mockedFindOne).toHaveBeenCalledTimes(1);
+    expect(mockedFindOne).toHaveBeenCalledWith(user);
+
+    // make sure the query was executed
+    await expect(mockedExec.mock.results[0].value).resolves.toStrictEqual(user);
+    expect(mockedExec).toHaveBeenCalledTimes(1);
   });
 
   test("should return null if the user doesn't exist", async () => {
-    const address = '0xd1699002d9548DCA840268ba1bd1afa27E0ba62d';
+    const user = { id: 'FAKE_ID' };
 
-    mockedFindByID.mockResolvedValueOnce(null);
+    const mockedExec = jest.fn().mockResolvedValueOnce(null);
+    mockedFindOne.mockImplementationOnce((() => ({
+      exec: mockedExec,
+    })) as unknown as typeof mockedFindOne);
 
-    await expect(getUser(address)).resolves.toStrictEqual(null);
+    await expect(getUser(user.id)).resolves.toStrictEqual(null);
 
-    expect(mockedFindByID).toHaveBeenCalledTimes(1);
-    expect(mockedFindByID).toHaveBeenCalledWith(address);
-    await expect(mockedFindByID.mock.results[0].value).resolves.toStrictEqual(
-      null
-    );
+    expect(mockedFindOne).toHaveBeenCalledTimes(1);
+    expect(mockedFindOne).toHaveBeenCalledWith(user);
+
+    // make sure the query was executed
+    await expect(mockedExec.mock.results[0].value).resolves.toStrictEqual(null);
+    expect(mockedExec).toHaveBeenCalledTimes(1);
   });
 
   test('should throw a generic error if connection to the database is broken, but log the real one', async () => {
     // the error message that the ODM should throw -- must never be returned as a API response
     // also this error must be logged once caught for monitoring purposes
-    const ORMError = 'Error message from the ODM';
+    const ODMError = 'Error message from the ODM';
     // the error message that must be returned as a API response
     const AbstractError = 'DB: Internal error';
     // here we spyOn console.log in order to check that the real error is correctly logged
     const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
-    const address = '0xd1699002d9548DCA840268ba1bd1afa27E0ba62d';
+    const user = { id: '0xd1699002d9548DCA840268ba1bd1afa27E0ba62d' };
 
-    mockedFindByID.mockRejectedValue(ORMError);
+    const mockedExec = jest.fn().mockRejectedValue(ODMError);
+    mockedFindOne.mockImplementationOnce((() => ({
+      exec: mockedExec,
+    })) as unknown as typeof mockedFindOne);
 
     // call the function and check that it throws the correct error
     try {
-      await getUser(address);
+      await getUser(user.id);
       // not expected to reach -- fail test if above expression doesn't throw anything.
       expect(true).toBe(false);
     } catch (error) {
@@ -70,15 +81,16 @@ describe('DB: getUser', () => {
     }
 
     // make sure the ODM function was called once with the correct arguments
-    expect(mockedFindByID).toHaveBeenCalledTimes(1);
-    expect(mockedFindByID).toHaveBeenCalledWith(address);
-    await expect(mockedFindByID.mock.results[0].value).rejects.toEqual(
-      ORMError
-    );
+    expect(mockedFindOne).toHaveBeenCalledTimes(1);
+    expect(mockedFindOne).toHaveBeenCalledWith(user);
+
+    // make sure the query was executed once and rejected
+    await expect(mockedExec.mock.results[0].value).rejects.toEqual(ODMError);
+    expect(mockedExec).toHaveBeenCalledTimes(1);
 
     // make sure console.error was called once with the real error
     expect(consoleErrorMock).toHaveBeenCalledTimes(1);
-    expect(consoleErrorMock).toHaveBeenCalledWith(ORMError);
+    expect(consoleErrorMock).toHaveBeenCalledWith(ODMError);
 
     // restore the console.error spyOn
     consoleErrorMock.mockRestore();
@@ -107,7 +119,7 @@ describe('DB: updateUser', () => {
     expect(mockedFindOneAndUpdate).toHaveBeenCalledTimes(1);
     expect(mockedFindOneAndUpdate).toHaveBeenCalledWith(
       { id: payload.walletAddress },
-      payload.values,
+      { $set: { channels: payload.values } },
       { upsert: true, strict: true }
     );
   });
@@ -115,13 +127,13 @@ describe('DB: updateUser', () => {
   test('should throw a generic error if connection to the database is broken, but log the real one', async () => {
     // the error message that the ODM should throw -- must never be returned as a API response
     // also this error must be logged once caught for monitoring purposes
-    const ORMError = 'Error message from the ODM';
+    const ODMError = 'Error message from the ODM';
     // the error message that must be returned as a API response
     const AbstractError = 'DB: Internal error';
     // here we spyOn console.log in order to check that the real error is correctly logged
     const consoleErrorMock = jest.spyOn(console, 'error').mockImplementation();
 
-    mockedFindOneAndUpdate.mockRejectedValue(ORMError);
+    mockedFindOneAndUpdate.mockRejectedValue(ODMError);
 
     // call the function and check that it throws the correct error
     try {
@@ -142,16 +154,16 @@ describe('DB: updateUser', () => {
     expect(mockedFindOneAndUpdate).toHaveBeenCalledTimes(1);
     expect(mockedFindOneAndUpdate).toHaveBeenCalledWith(
       { id: payload.walletAddress },
-      payload.values,
+      { $set: { channels: payload.values } },
       { upsert: true, strict: true }
     );
     await expect(mockedFindOneAndUpdate.mock.results[0].value).rejects.toEqual(
-      ORMError
+      ODMError
     );
 
     // make sure console.error was called once with the real error
     expect(consoleErrorMock).toHaveBeenCalledTimes(1);
-    expect(consoleErrorMock).toHaveBeenCalledWith(ORMError);
+    expect(consoleErrorMock).toHaveBeenCalledWith(ODMError);
 
     // restore the console.error spyOn
     consoleErrorMock.mockRestore();
