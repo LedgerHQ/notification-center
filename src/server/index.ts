@@ -8,6 +8,9 @@ import {
 } from './middlewares/validation/index';
 // custom router and custom init logic required by the telegram connector
 import { TelegramRouter, setupWebhook } from '../connectors/telegram';
+import { DB_URL } from '../database/config';
+
+const { NODE_DOCKER_PORT, USE_DOCKER, LOCAL_PORT } = process.env;
 
 export const app = express();
 
@@ -73,11 +76,12 @@ const server = async () => {
     mongoose.set('strictQuery', false);
 
     // Connect to a MongoDB instance and configure the Telegram webhook
-    await Promise.all([mongoose.connect(process.env.DB_URL), setupWebhook()]);
+    await Promise.all([mongoose.connect(DB_URL), setupWebhook()]);
 
     // Start the server
-    app.listen(process.env.PORT, () => {
-      console.log(`Server started on port ${process.env.PORT}`);
+    const PORT = USE_DOCKER ? NODE_DOCKER_PORT : LOCAL_PORT;
+    app.listen(PORT, () => {
+      console.log(`Server started on port ${PORT}`);
     });
   } catch (error) {
     console.error(error);
