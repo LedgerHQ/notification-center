@@ -42,7 +42,35 @@ pnpm run lefthook
 
 ## Start the application locally
 
-First, you will need to install and start the [mongodb](https://www.mongodb.com/) service using the command below. MongoDB is a cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with optional schemas. Note there is no Dockerfile for the moment, so you will need to install MongoDB manually. You can install it following the [official documentation](https://docs.mongodb.com/manual/installation/). Once installed, run the following command to start the service:
+### With Docker 🐳
+
+Prerequisite: you will need [Docker Compose](https://docs.docker.com/compose/) installed and setup on your machine.
+
+Make sure the `USE_DOCKER` env varibale is defined in your `.env` file.
+
+Build and start the containers with:
+
+```sh
+docker compose up --build
+```
+
+Stop the containers with:
+
+```sh
+docker compose stop
+```
+
+Remove the containers with:
+
+```sh
+docker compose down
+```
+
+### Without Docker
+
+Make sure the `USE_DOCKER` env varibale is NOT defined in your `.env` file.
+
+First, you will need to install and start the [mongodb](https://www.mongodb.com/) service using the command below. MongoDB is a cross-platform document-oriented database program. Classified as a NoSQL database program, MongoDB uses JSON-like documents with optional schemas. You can install it following the [official documentation](https://docs.mongodb.com/manual/installation/). Once installed, run the following command to start the service:
 
 On Debian/Ubuntu:
 
@@ -65,6 +93,8 @@ pnpm dev
 ```
 
 It will start an [Express](https://expressjs.com/fr/) server locally on the port defined in the .env file. Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
+
+---
 
 At this point, you should be able to access the server and ping it. However, connectors are not yet available, meaning the notification workflow will fail. You can check the [list of supported connectors](#list-of-supported-connectors) to know which one are available and how to use/configure them by following the documentation.
 
