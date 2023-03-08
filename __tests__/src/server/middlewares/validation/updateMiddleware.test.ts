@@ -11,7 +11,7 @@ describe('Middleware -- updateMiddleware', () => {
   describe('check timestamp validation', () => {
     const bodyFixture = {
       walletAddress: '',
-      values: { telegram: [], ifttt: [] },
+      values: { telegram: [], ifttt: [], discord: [] },
       signature: '',
       publicKey: '',
     };

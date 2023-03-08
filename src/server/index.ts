@@ -8,6 +8,7 @@ import {
 } from './middlewares/validation/index';
 // custom router and custom init logic required by the telegram connector
 import { TelegramRouter, setupWebhook } from '../connectors/telegram';
+import { DiscordRouter } from '../connectors/discord';
 
 export const app = express();
 
@@ -17,6 +18,7 @@ export const ROUTE = {
   ping: '/ping',
   // namespace for the telegram custom routing
   telegram: '/telegram',
+  discord: '/discord',
 };
 
 /*****************************/
@@ -65,6 +67,9 @@ app.get(ROUTE.ping, (_, res) =>
 
 // Load the telegram router in the /telegram path
 app.use(ROUTE.telegram, TelegramRouter);
+
+// Load the discord router in the /discord path
+app.use(ROUTE.discord, DiscordRouter);
 
 const server = async () => {
   try {

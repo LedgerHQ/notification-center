@@ -3,6 +3,7 @@ import IConnector from './connectors/IConnector';
 type ChannelsType = {
   telegram: string[]; // Telegram handles
   ifttt: string[]; // IFTTT webhook keys
+  discord: string[]; // Discord channelId
 };
 type ChannelsEnum = keyof ChannelsType;
 

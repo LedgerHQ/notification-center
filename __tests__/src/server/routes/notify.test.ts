@@ -10,6 +10,7 @@ const mockedDB = jest.mocked(database);
 jest.mock('@/src/connectors');
 const mockedIFTTT = jest.mocked(connectors.ifttt);
 const mockedTelegram = jest.mocked(connectors.telegram);
+const mockedDiscord = jest.mocked(connectors.discord);
 
 describe('notify', () => {
   // ******* FIXTURES *******
@@ -17,7 +18,12 @@ describe('notify', () => {
     to: '0xd1699002d9548DCA840268ba1bd1afa27E0ba62d',
     message: 'test message',
   };
-  const channels = { telegram: ['fake-telegram'], ifttt: ['fake-ifttt'] };
+  const channels = {
+    telegram: ['fake-telegram'],
+    ifttt: ['fake-ifttt'],
+    discord: ['fake-discord'],
+  };
+  const emptychannels = { telegram: [], ifttt: [], discord: [] };
   const user = { id: 'toto', channels };
 
   // reset mocks before each test
@@ -25,6 +31,7 @@ describe('notify', () => {
     mockedDB.getUser.mockReset();
     mockedIFTTT.notify.mockReset();
     mockedTelegram.notify.mockReset();
+    mockedDiscord.notify.mockReset();
   });
 
   test('send notifications to all channels when available', async () => {
@@ -53,10 +60,20 @@ describe('notify', () => {
       payload.message,
       channels.ifttt
     );
+
+    // check that the Discord connector has been called with the correct parameters
+    expect(mockedDiscord.notify).toHaveBeenCalledTimes(1);
+    expect(mockedDiscord.notify).toHaveBeenCalledWith(
+      payload.message,
+      channels.discord
+    );
   });
 
   test('send notification only to IFTTT', async () => {
-    const customUser = { ...user, channels: { ...channels, telegram: [] } };
+    const customUser = {
+      ...user,
+      channels: { ...emptychannels, ifttt: channels.ifttt },
+    };
 
     mockedDB.getUser.mockResolvedValueOnce(customUser);
 
@@ -68,18 +85,22 @@ describe('notify', () => {
       customUser
     );
 
-    // check that the Telegram connector has not been called as it is not in the user channels
-    expect(mockedTelegram.notify).toHaveBeenCalledTimes(0);
-
     expect(mockedIFTTT.notify).toHaveBeenCalledTimes(1);
     expect(mockedIFTTT.notify).toHaveBeenCalledWith(
       payload.message,
       channels.ifttt
     );
+
+    // check that the other connectors has not been called as it is not in the user channels
+    expect(mockedTelegram.notify).toHaveBeenCalledTimes(0);
+    expect(mockedDiscord.notify).toHaveBeenCalledTimes(0);
   });
 
   test('send notification only to Telegram', async () => {
-    const customUser = { ...user, channels: { ...channels, ifttt: [] } };
+    const customUser = {
+      ...user,
+      channels: { ...emptychannels, telegram: channels.telegram },
+    };
 
     mockedDB.getUser.mockResolvedValueOnce(customUser);
 
@@ -97,8 +118,36 @@ describe('notify', () => {
       channels.telegram
     );
 
-    // check that the IFTTT connector has not been called as it is not in the user channels
+    // check that the other connectors has not been called as it is not in the user channels
     expect(mockedIFTTT.notify).toHaveBeenCalledTimes(0);
+    expect(mockedDiscord.notify).toHaveBeenCalledTimes(0);
+  });
+
+  test('send notification only to Discord', async () => {
+    const customUser = {
+      ...user,
+      channels: { ...emptychannels, discord: channels.discord },
+    };
+
+    mockedDB.getUser.mockResolvedValueOnce(customUser);
+
+    await expect(notify(payload)).resolves.not.toThrowError();
+
+    expect(mockedDB.getUser).toHaveBeenCalledTimes(1);
+    expect(mockedDB.getUser).toHaveBeenCalledWith(payload.to);
+    await expect(mockedDB.getUser.mock.results[0].value).resolves.toStrictEqual(
+      customUser
+    );
+
+    expect(mockedDiscord.notify).toHaveBeenCalledTimes(1);
+    expect(mockedDiscord.notify).toHaveBeenCalledWith(
+      payload.message,
+      channels.discord
+    );
+
+    // check that the other connectors has not been called as it is not in the user channels
+    expect(mockedIFTTT.notify).toHaveBeenCalledTimes(0);
+    expect(mockedTelegram.notify).toHaveBeenCalledTimes(0);
   });
 
   test("throws an error if the user doesn't exist", async () => {
@@ -125,6 +174,7 @@ describe('notify', () => {
     // check that connectors have not been called as the user doesn't exist
     expect(mockedTelegram.notify).toHaveBeenCalledTimes(0);
     expect(mockedIFTTT.notify).toHaveBeenCalledTimes(0);
+    expect(mockedDiscord.notify).toHaveBeenCalledTimes(0);
   });
 
   test("doesn't throw any error if only 1 on 2 channels fail (IFTTT)", async () => {
@@ -201,6 +251,7 @@ describe('notify', () => {
     mockedDB.getUser.mockResolvedValueOnce(user);
     mockedTelegram.notify.mockRejectedValue(errorMessage`Telegram`);
     mockedIFTTT.notify.mockRejectedValue(errorMessage`IFTTT`);
+    mockedDiscord.notify.mockRejectedValue(errorMessage`Discord`);
 
     // call the function and check that it throws the correct error
     // the function is expected to fail because all connectors have thrown an error
@@ -241,6 +292,15 @@ describe('notify', () => {
     );
     await expect(mockedIFTTT.notify.mock.results[0].value).rejects.toEqual(
       errorMessage`IFTTT`
+    );
+
+    expect(mockedDiscord.notify).toHaveBeenCalledTimes(1);
+    expect(mockedDiscord.notify).toHaveBeenCalledWith(
+      payload.message,
+      channels.discord
+    );
+    await expect(mockedDiscord.notify.mock.results[0].value).rejects.toEqual(
+      errorMessage`Discord`
     );
   });
 });

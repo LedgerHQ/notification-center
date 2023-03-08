@@ -20,6 +20,12 @@ const notify = async (payload: Payload.NotifyUser) => {
       connectors.ifttt.notify(payload.message, user.channels.ifttt)
     );
 
+  // if the users saved some Discord endpoints, push the notification order to the notifications list
+  if (user.channels.discord?.length)
+    notifications.push(
+      connectors.discord.notify(payload.message, user.channels.discord)
+    );
+
   // wait for all promises to resolve and get back the results and the status of all promises
   const responses = await Promise.allSettled(notifications);
 
