@@ -124,7 +124,7 @@ describe('server', () => {
     test('success', async () => {
       const params: Payload.UpdateUser = {
         walletAddress: '0xd1699002d9548DCA840268ba1bd1afa27E0ba62d',
-        values: { telegram: ['@test'], ifttt: ['test'] },
+        values: { telegram: ['@test'], ifttt: ['test'], discord: ['test'] },
         timestamp: Date.now(),
         signature:
           '0x21fbf0696d5e0aa2ef41a2b4ffb623bcaf070461d61cf7251c74161f82fec3a4370854bc0a34b3ab487c1bc021cd318c734c51ae29374f2beb0e6f2dd49b4bf41c',
@@ -152,7 +152,7 @@ describe('server', () => {
     test('failed', async () => {
       const params: Payload.UpdateUser = {
         walletAddress: '0xd1699002d9548DCA840268ba1bd1afa27E0ba62d',
-        values: { telegram: ['@test'], ifttt: ['test'] },
+        values: { telegram: ['@test'], ifttt: ['test'], discord: ['test'] },
         timestamp: Date.now(),
         signature:
           '0x21fbf0696d5e0aa2ef41a2b4ffb623bcaf070461d61cf7251c74161f82fec3a4370854bc0a34b3ab487c1bc021cd318c734c51ae29374f2beb0e6f2dd49b4bf41c',

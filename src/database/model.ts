@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
     channels: {
       telegram: [String],
       ifttt: [String],
+      discord: [String],
     },
   },
   {

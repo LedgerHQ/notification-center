@@ -8,6 +8,7 @@ import {
 } from './middlewares/validation/index';
 // custom router and custom init logic required by the telegram connector
 import { TelegramRouter, setupWebhook } from '../connectors/telegram';
+import { DiscordRouter, DiscordBot } from '../connectors/discord';
 
 export const app = express();
 
@@ -17,6 +18,7 @@ export const ROUTE = {
   ping: '/ping',
   // namespace for the telegram custom routing
   telegram: '/telegram',
+  discord: '/discord',
 };
 
 /*****************************/
@@ -66,14 +68,21 @@ app.get(ROUTE.ping, (_, res) =>
 // Load the telegram router in the /telegram path
 app.use(ROUTE.telegram, TelegramRouter);
 
+// Load the discord router in the /discord path
+app.use(ROUTE.discord, DiscordRouter);
+
 const server = async () => {
   try {
     // explicitly set the strictQuery option to false to avoid warning
     // this warning will be removed in the next major release of mongoose
     mongoose.set('strictQuery', false);
 
-    // Connect to a MongoDB instance and configure the Telegram webhook
-    await Promise.all([mongoose.connect(process.env.DB_URL), setupWebhook()]);
+    // Connect to a MongoDB instance and configure the Telegram webhook & discord bot
+    await Promise.all([
+      mongoose.connect(process.env.DB_URL),
+      setupWebhook(),
+      DiscordBot.start(),
+    ]);
 
     // Start the server
     app.listen(process.env.PORT, () => {

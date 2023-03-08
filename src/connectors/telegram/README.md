@@ -24,4 +24,4 @@ The constructor method of the TelegramConnector class calls the constructor of t
 
 # Testing it locally
 
-Follow the instructions in the following link to test the IFTTT connector locally: [here](https://github.com/LedgerHQ/notification-center/wiki/Telegram-Connector-How-to-configure-and-test-it-locally)
+Follow the instructions in the following link to test the Telegram connector locally: [here](https://github.com/LedgerHQ/notification-center/wiki/Telegram-Connector-How-to-configure-and-test-it-locally)

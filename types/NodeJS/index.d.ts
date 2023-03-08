@@ -8,6 +8,8 @@ declare global {
       TELEGRAM_TOKEN: string;
       PORT?: string;
       MAX_TIME_DIFF?: string;
+      DISCORD_BOT_TOKEN: string;
+      DISCORD_CLIENT_ID: string;
     }
   }
 }
